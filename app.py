@@ -32,7 +32,7 @@ failures = st.number_input("Number of Failures", min_value=0, max_value=10, valu
 hostel = st.selectbox("Hostel?", ["Yes", "No"])
 sleep_hours = st.slider("Daily Sleep Hours", 0, 12, 6)
 family_support = st.selectbox("Family Support Level", ["Low", "Medium", "High"])
-interest = st.selectbox("Primary Interest", sorted(data["interst"].unique()))
+interest = st.selectbox("Primary Interest", sorted(data["interest"].unique()))
 budget = st.selectbox("Budget Level", sorted(data["budget level"].unique()))
 skill_level = st.selectbox("Skill Level", sorted(data["skill level"].unique()))
 stress_level = st.selectbox("Stress Level", sorted(data["stress level"].unique()))
@@ -121,3 +121,4 @@ st.header("📊 Sample Student Dataset")
 st.dataframe(data)
 
 st.caption("Mini Project | Student Skill Roadmap | Streamlit Web App")
+
