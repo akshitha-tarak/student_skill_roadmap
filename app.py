@@ -322,6 +322,10 @@ def roadmap_to_markdown(name, info, roadmap):
         # Convert anything (including numpy types) to clean string
         try:
             if pd.isna(x):
+              return ""
+        except Exception:
+            pass
+        return str(x)
 
     lines = []
     lines.append(f"# Personalized Roadmap for {s(name) or 'Student'}")
@@ -599,6 +603,7 @@ with st.expander("📊 Sample Student Dataset (Preview)", expanded=False):
     st.dataframe(data, use_container_width=True)
 
 st.caption("Mini Project | Student Skill Roadmap | Streamlit Web App")
+
 
 
 
