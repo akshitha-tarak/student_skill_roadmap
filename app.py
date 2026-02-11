@@ -530,13 +530,14 @@ if st.button("🔍 Generate My Roadmap"):
         mime="text/markdown",
     )
 st.markdown('</div>', unsafe_allow_html=True)
-    st.divider()
+  st.divider()
 
 # ---------------- Dataset preview ----------------
 with st.expander("📊 Sample Student Dataset (Preview)", expanded=False):
     st.dataframe(data, use_container_width=True)
 
 st.caption("Mini Project | Student Skill Roadmap | Streamlit Web App")
+
 
 
 
