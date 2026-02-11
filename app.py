@@ -316,15 +316,12 @@ def generate_structured_roadmap(info, df):
         "projects": projects,
     }
 
+
 def roadmap_to_markdown(name, info, roadmap):
     def s(x):
         # Convert anything (including numpy types) to clean string
         try:
             if pd.isna(x):
-                return ""
-        except Exception:
-            pass
-        return str(x)
 
     lines = []
     lines.append(f"# Personalized Roadmap for {s(name) or 'Student'}")
@@ -384,6 +381,59 @@ def roadmap_to_markdown(name, info, roadmap):
     lines.append("")
 
     return "\n".join(lines)
+def clamp(x, lo, hi):
+    return max(lo, min(hi, x))
+
+def level_to_bucket(skill_level: str):
+    s = str(skill_level).lower()
+    if "begin" in s:
+        return "Beginner"
+    if "inter" in s:
+        return "Intermediate"
+    if "adv" in s:
+        return "Advanced"
+    return "Beginner"
+
+def readiness_breakdown(info):
+    # Academics (0–30)
+    g = float(info.get("gpa", 0))
+    if g >= 8: academics = 30
+    elif g >= 7: academics = 26
+    elif g >= 6: academics = 20
+    elif g >= 5: academics = 14
+    else: academics = 8
+
+    # Skills (0–30) based on skill_level + study_hours
+    lvl = level_to_bucket(info.get("skill_level", "Beginner"))
+    sh = int(info.get("study_hours", 0))
+    base = 12 if lvl == "Beginner" else 20 if lvl == "Intermediate" else 26
+    bonus = 6 if sh >= 4 else 3 if sh >= 3 else 1
+    skills = clamp(base + bonus, 0, 30)
+
+    # Routine (0–20) sleep + stress + confusion
+    sleep = int(info.get("sleep_hours", 6))
+    stress = info.get("stress_level", "Medium")
+    confusion = info.get("confusion_level", "Medium")
+
+    routine = 0
+    routine += 8 if sleep >= 7 else 5 if sleep >= 6 else 2
+    routine += 6 if stress == "Low" else 4 if stress == "Medium" else 2
+    routine += 6 if confusion == "Low" else 4 if confusion == "Medium" else 2
+    routine = clamp(routine, 0, 20)
+
+    # Communication (0–20)
+    comm = str(info.get("communication", "Average"))
+    communication = 20 if comm in ("Good", "High") else 14 if comm in ("Average", "Medium") else 8
+
+    total = academics + skills + routine + communication  # /100
+    return {
+        "Academics": academics,
+        "Skills": skills,
+        "Routine": routine,
+        "Communication": communication,
+        "Total": clamp(total, 0, 100)
+    }
+
 
 # ---------------- UI ----------------
 # st.title("🎓 Personalized Student Skill Roadmap")
@@ -471,17 +521,29 @@ if st.button("🔍 Generate My Roadmap"):
     col3.metric("Sleep Hours", f"{sleep_hours}")
 
     # A simple "readiness" score (just UI)
-    readiness = 0
-    readiness += 30 if gpa >= 7 else 20 if gpa >= 6 else 10
-    readiness += 25 if study_hours >= 4 else 15 if study_hours >= 3 else 8
-    readiness += 20 if stress_level != "High" else 8
-    readiness += 15 if confusion_level != "High" else 8
-    readiness += 10 if communication in ("Average", "Good") else 5
-    readiness = min(readiness, 100)
+    # readiness = 0
+    # readiness += 30 if gpa >= 7 else 20 if gpa >= 6 else 10
+    # readiness += 25 if study_hours >= 4 else 15 if study_hours >= 3 else 8
+    # readiness += 20 if stress_level != "High" else 8
+    # readiness += 15 if confusion_level != "High" else 8
+    # readiness += 10 if communication in ("Average", "Good") else 5
+    # readiness = min(readiness, 100)
 
-    st.write("### 📈 Readiness Score")
-    st.progress(readiness / 100)
-    st.caption("This score is a UI indicator (not an official assessment).")
+    # st.write("### 📈 Readiness Score")
+    # st.progress(readiness / 100)
+    # st.caption("This score is a UI indicator (not an official assessment).")
+    score = readiness_breakdown(student_info)
+
+    st.markdown("### 📈 Readiness Score (Breakdown)")
+    st.progress(score["Total"] / 100)
+    st.caption("UI indicator (not an official assessment).")
+    
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Academics", f'{score["Academics"]}/30')
+    c2.metric("Skills", f'{score["Skills"]}/30')
+    c3.metric("Routine", f'{score["Routine"]}/20')
+    c4.metric("Communication", f'{score["Communication"]}/20')
+
 
     tab1, tab2, tab3, tab4 = st.tabs(["🧭 Roadmap", "🗓️ 4-Week Plan", "🧪 Projects", "📚 Resources"])
 
@@ -537,6 +599,7 @@ with st.expander("📊 Sample Student Dataset (Preview)", expanded=False):
     st.dataframe(data, use_container_width=True)
 
 st.caption("Mini Project | Student Skill Roadmap | Streamlit Web App")
+
 
 
 
