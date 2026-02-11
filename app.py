@@ -1,132 +1,126 @@
-# import streamlit as st
-# import pandas as pd
 
-# # --- Page configuration ---
-# st.set_page_config(
-#     page_title="Student Skill Roadmap",
-#     layout="centered"
-# )
 
-# # --- Load dataset ---
-# @st.cache_data
-# def load_data():
-#     return pd.read_csv("student_performance_extended.csv")  # your dataset filename
 
-# data = load_data()
 
-# # --- Title ---
-# st.title("🎓 Personalized Student Skill Roadmap Web App")
-# st.write("Interactive web application to guide students in planning their skills, career, and personal development.")
 
-# st.divider()
 
-# --- User Input ---
-# st.header("📋 Enter Your Details")
 
-# name = st.text_input("Student Name", "")
-# year = st.selectbox("Year", sorted(data["year"].unique()))
-# branch = st.selectbox("Branch", sorted(data["branch"].unique()))
-# gpa = st.slider("GPA", 0.0, 10.0, 7.0, 0.1)
-# study_hours = st.slider("Daily Study Hours", 0, 12, 3)
-# failures = st.number_input("Number of Failures", min_value=0, max_value=10, value=0)
-# hostel = st.selectbox("Hostel?", ["Yes", "No"])
-# sleep_hours = st.slider("Daily Sleep Hours", 0, 12, 6)
-# family_support = st.selectbox("Family Support Level", ["Low", "Medium", "High"])
-# interest = st.selectbox("Primary Interest", sorted(data["interest"].unique()))
-# budget = st.selectbox("Budget Level", sorted(data["budget_level"].unique()))
-# skill_level = st.selectbox("Skill Level", sorted(data["skill_level"].unique()))
-# stress_level = st.selectbox("Stress Level", sorted(data["stress_level"].unique()))
-# confusion_level = st.selectbox("Confusion Level", sorted(data["confusion_level"].unique()))
-# communication = st.selectbox("Communication Level", sorted(data["communication_level"].unique()))
 
-# st.divider()
 
-# # --- Recommendation Logic ---
-# def generate_roadmap(info):
-#     steps = []
-
-#     # Skill improvement
-#     if info['skill_level'] == "Beginner":
-#         steps.append("Start with basics of your interest area and practice small projects.")
-#     else:
-#         steps.append("Focus on advanced projects, real-world applications, and certifications.")
-
-#     # Study & GPA
-#     if info['study_hours'] < 3 or info['gpa'] < 6.0:
-#         steps.append("Increase study hours and follow a structured learning schedule.")
-
-#     # Hostel / Sleep
-    # if info['hostel'] == "Yes":
-    #     steps.append("Maintain a healthy routine: proper sleep, food, and time management in hostel.")
-    # else:
-    #     steps.append("Balance family responsibilities with studies and skill building.")
-
-    # # Stress & Confusion
-    # if info['stress_level'] == "High" or info['confusion_level'] == "High":
-    #     steps.append("Adopt stress management techniques: meditation, time management, and counseling.")
-
-    # # Family Support
-    # if info['family_support'] == "Low":
-    #     steps.append("Seek mentors, peer groups, or online communities for guidance.")
-
-    # # Communication
-    # if info['communication'] == "Poor":
-    #     steps.append("Work on communication skills through speaking, writing, and online workshops.")
-
-    # # Interest-based learning
-#     steps.append(f"Follow curated courses, books, and online tutorials for {info['interest']}.")
-
-#     # Budget
-#     if info['budget'] == "Low":
-#         steps.append("Use free resources: YouTube tutorials, free MOOCs, and open-source materials.")
-#     else:
-#         steps.append("Consider paid courses, mentorship, or workshops for faster learning.")
-
-#     return steps
-
-# # --- Generate Roadmap Button ---
-# if st.button("🔍 Generate My Roadmap"):
-#     student_info = {
-#         'skill_level': skill_level,
-    #     'interest': interest,
-    #     'study_hours': study_hours,
-    #     'gpa': gpa,
-    #     'stress_level': stress_level,
-    #     'confusion_level': confusion_level,
-    #     'hostel': hostel,
-    #     'communication': communication,
-    #     'budget': budget,
-    #     'family_support': family_support
-    # }
-
-    # roadmap = generate_roadmap(student_info)
-    # st.success(f"✅ Roadmap Generated for {name}")
-    
-#     st.subheader("📌 Suggested Steps:")
-#     for i, step in enumerate(roadmap, 1):
-#         st.write(f"{i}. {step}")
-
-#     st.subheader("📚 Recommended Resources:")
-#     st.markdown("""
-#     - **Free Courses:** YouTube, NPTEL, Coursera free courses  
-#     - **Paid Courses:** Udemy, Coursera, edX  
-#     - **Practice & Projects:** HackerRank, LeetCode, GitHub  
-#     - **Soft Skills & Communication:** Toastmasters, online workshops
-#     """)
-
-# st.divider()
-
-# # --- Display Dataset Preview ---
-# st.header("📊 Sample Student Dataset")
-# st.dataframe(data)
-
-# st.caption("Mini Project | Student Skill Roadmap | Streamlit Web App")
 import streamlit as st
 import pandas as pd
 from datetime import date
 
 # ---------------- Page config ----------------
 st.set_page_config(page_title="Student Skill Roadmap", layout="centered")
+# ---------------- UI THEME (HTML/CSS) ----------------
+st.markdown("""
+<style>
+/* ===== Page background + font ===== */
+.stApp{
+  background: radial-gradient(1200px 600px at 10% 0%, rgba(99,102,241,.25), transparent 60%),
+              radial-gradient(1000px 600px at 90% 10%, rgba(16,185,129,.18), transparent 55%),
+              linear-gradient(180deg, #0b1220 0%, #070b14 100%);
+  color: #e5e7eb;
+}
+
+/* Wider + clean spacing */
+.block-container{
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  max-width: 1050px;
+}
+
+/* Hide streamlit menu/footer */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+/* ===== Typography ===== */
+h1, h2, h3 { letter-spacing: .2px; }
+small, .stCaption { color: rgba(229,231,235,.75) !important; }
+
+/* ===== Cards ===== */
+.card{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 18px;
+  padding: 18px 18px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+  margin-bottom: 14px;
+}
+
+.card-title{
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+}
+.card-sub{
+  margin: 0;
+  color: rgba(229,231,235,.75);
+  font-size: .95rem;
+}
+
+/* ===== Inputs ===== */
+.stTextInput input, .stNumberInput input, .stTextArea textarea{
+  border-radius: 12px !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  background: rgba(255,255,255,0.06) !important;
+}
+.stSelectbox [data-baseweb="select"]{
+  border-radius: 12px !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+}
+
+/* Sliders */
+.stSlider [data-baseweb="slider"]{
+  padding-top: 6px;
+}
+
+/* ===== Buttons ===== */
+.stButton button{
+  width: 100%;
+  border-radius: 14px;
+  padding: 11px 14px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: linear-gradient(135deg, rgba(99,102,241,.95), rgba(16,185,129,.85));
+  color: white;
+  font-weight: 800;
+}
+.stButton button:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+/* ===== Tabs styling ===== */
+.stTabs [data-baseweb="tab"]{
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+.stTabs [aria-selected="true"]{
+  background: rgba(255,255,255,0.10) !important;
+}
+
+/* ===== Metrics ===== */
+[data-testid="stMetric"]{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: 14px 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+/* Dataframe look */
+[data-testid="stDataFrame"]{
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.10);
+}
+</style>
+""", unsafe_allow_html=True)
+
 
 # ---------------- Load dataset ----------------
 @st.cache_data
@@ -322,50 +316,6 @@ def generate_structured_roadmap(info, df):
         "projects": projects,
     }
 
-# def roadmap_to_markdown(name, info, roadmap):
-#     lines = []
-#     lines.append(f"# Personalized Roadmap for {name or 'Student'}")
-#     lines.append(f"**Generated on:** {date.today().isoformat()}")
-#     lines.append("")
-#     lines.append("## Profile")
-#     for k in ["year", "branch", "interest", "skill_level", "budget", "hostel", "study_hours", "gpa", "stress_level", "confusion_level", "communication", "family_support"]:
-#         lines.append(f"- **{k.replace('_',' ').title()}**: {info.get(k)}")
-#     lines.append("")
-#     lines.append("## Data Insight")
-#     lines.append(roadmap["similar_note"])
-#     lines.append("")
-#     lines.append("## Goals")
-#     for g in roadmap["goals"]:
-#         lines.append(f"- {g}")
-#     lines.append("")
-#     if roadmap["risks"]:
-#         lines.append("## Risks to Watch")
-#         for r in roadmap["risks"]:
-#             lines.append(f"- {r}")
-#         lines.append("")
-#     lines.append("## Daily Habits")
-#     for h in roadmap["habits"]:
-#         lines.append(f"- {h}")
-#     lines.append("")
-#     lines.append("## Action Steps")
-#     for s in roadmap["steps"]:
-#         lines.append(f"- {s}")
-#     lines.append("")
-#     lines.append("## 4-Week Plan")
-#     for w in roadmap["week_plan"]:
-#         lines.append(f"### {w['title']}")
-#         for b in w["bullets"]:
-#             lines.append(f"- {b}")
-#         lines.append("")
-#     lines.append("## Suggested Projects")
-#     for p in roadmap["projects"]:
-#         lines.append(f"- {p}")
-#     lines.append("")
-#     lines.append("## Resources")
-#     for r in roadmap["resources"]:
-#         lines.append(f"- {r}")
-#     lines.append("")
-#     return "\n".join(lines)
 def roadmap_to_markdown(name, info, roadmap):
     def s(x):
         # Convert anything (including numpy types) to clean string
@@ -436,11 +386,25 @@ def roadmap_to_markdown(name, info, roadmap):
     return "\n".join(lines)
 
 # ---------------- UI ----------------
-st.title("🎓 Personalized Student Skill Roadmap")
-st.caption("A cleaner roadmap output with week-wise plan + data-driven insights.")
-st.divider()
+# st.title("🎓 Personalized Student Skill Roadmap")
+# st.caption("A cleaner roadmap output with week-wise plan + data-driven insights.")
+# st.divider()
 
-st.header("📋 Enter Your Details")
+# st.header("📋 Enter Your Details")
+st.markdown("""
+<div class="card">
+  <div class="card-title">🎓 Personalized Student Skill Roadmap</div>
+  <p class="card-sub">Cleaner UI + week-wise plan + data-driven insights (rule-based + dataset filtering).</p>
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div class="card">
+  <div class="card-title">📋 Enter Your Details</div>
+  <p class="card-sub">Fill your profile to generate a personalized roadmap and readiness score.</p>
+</div>
+""", unsafe_allow_html=True)
+
 
 # Pick options safely (won't crash if columns missing)
 years = safe_unique(data, "year", [1, 2, 3, 4])
@@ -451,7 +415,7 @@ skill_levels = safe_unique(data, "skill_level", ["Beginner", "Intermediate", "Ad
 stress_levels = safe_unique(data, "stress_level", ["Low", "Medium", "High"])
 conf_levels = safe_unique(data, "confusion_level", ["Low", "Medium", "High"])
 comm_levels = safe_unique(data, "communication_level", ["Poor", "Average", "Good"])
-
+st.markdown('<div class="card">', unsafe_allow_html=True)
 name = st.text_input("Student Name", "")
 year = st.selectbox("Year", years)
 branch = st.selectbox("Branch", branches)
@@ -467,8 +431,15 @@ skill_level = st.selectbox("Skill Level", skill_levels)
 stress_level = st.selectbox("Stress Level", stress_levels)
 confusion_level = st.selectbox("Confusion Level", conf_levels)
 communication = st.selectbox("Communication Level", comm_levels)
-
+st.markdown('</div>', unsafe_allow_html=True)
 st.divider()
+st.markdown("""
+<div class="card">
+  <div class="card-title">🚀 Generate</div>
+  <p class="card-sub">Click below to create your roadmap + 4-week plan + projects & resources.</p>
+</div>
+""", unsafe_allow_html=True)
+
 
 # ---------------- Generate Roadmap ----------------
 if st.button("🔍 Generate My Roadmap"):
@@ -492,7 +463,7 @@ if st.button("🔍 Generate My Roadmap"):
     roadmap = generate_structured_roadmap(student_info, data)
 
     st.success(f"✅ Roadmap Generated for {name or 'Student'}")
-
+    st.markdown('<div class="card">', unsafe_allow_html=True)
     # Quick dashboard metrics
     col1, col2, col3 = st.columns(3)
     col1.metric("GPA", f"{gpa:.1f}")
@@ -558,7 +529,7 @@ if st.button("🔍 Generate My Roadmap"):
         file_name=f"roadmap_{(name or 'student').replace(' ','_').lower()}.md",
         mime="text/markdown",
     )
-
+st.markdown('</div>', unsafe_allow_html=True)
     st.divider()
 
 # ---------------- Dataset preview ----------------
@@ -566,6 +537,7 @@ with st.expander("📊 Sample Student Dataset (Preview)", expanded=False):
     st.dataframe(data, use_container_width=True)
 
 st.caption("Mini Project | Student Skill Roadmap | Streamlit Web App")
+
 
 
 
