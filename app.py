@@ -75,17 +75,6 @@ st.markdown("""
 </h1>
 """, unsafe_allow_html=True)
 
-
-
-
-
-
-
-
-/* ===== METRICS ===== */
-
-
-
 # ---------------- Load dataset ----------------
 @st.cache_data
 def load_data():
