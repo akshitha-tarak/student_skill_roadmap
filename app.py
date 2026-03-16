@@ -17,12 +17,24 @@ st.set_page_config(page_title="Student Skill Roadmap", layout="centered")
 st.markdown("""
 <style>
 
-/* ===== MAIN APP BACKGROUND ===== */
-/* ===== BACKGROUND ===== */
+/* ===== APP BACKGROUND ===== */
 .stApp{
-    background: linear-gradient(135deg,#1e293b,#0f172a,#020617);
+    background: linear-gradient(135deg,#020617,#0f172a,#1e293b);
     color:#e2e8f0;
+    font-family: 'Inter', sans-serif;
 }
+
+/* ===== PAGE WIDTH ===== */
+.block-container{
+    max-width:1050px;
+    padding-top:2rem;
+}
+
+/* Hide Streamlit UI */
+#MainMenu {visibility:hidden;}
+footer {visibility:hidden;}
+header {visibility:hidden;}
+
 
 /* ===== HEADINGS ===== */
 h1,h2,h3{
@@ -30,54 +42,28 @@ h1,h2,h3{
     font-weight:700;
 }
 
-/* ===== LABEL TEXT ===== */
+
+/* ===== LABELS ===== */
 label{
     color:#cbd5f5 !important;
+    font-weight:600;
 }
 
-/* ===== LAYOUT ===== */
-.block-container{
-    max-width:1050px;
-    padding-top:2rem;
-    padding-bottom:2rem;
-}
-
-/* Hide streamlit default UI */
-#MainMenu{visibility:hidden;}
-footer{visibility:hidden;}
-header{visibility:hidden;}
-
-
-/* ===== TEXT ===== */
-
-h1,h2,h3{
-    letter-spacing:.3px;
-}
 
 /* ===== CARDS ===== */
 .card{
-    background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
     border-radius:16px;
-    padding:18px;
-    margin-bottom:16px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.35);
-}
-
-.card-title{
-    font-size:1.15rem;
-    font-weight:700;
-}
-
-.card-sub{
-    font-size:.95rem;
-    color:#9ca3af;
+    padding:20px;
+    margin-bottom:15px;
+    backdrop-filter: blur(8px);
 }
 
 
-/* ===== INPUTS ===== */
+/* ===== INPUT FIELDS ===== */
 input, textarea{
-    background:rgba(255,255,255,0.05) !important;
+    background: rgba(255,255,255,0.07) !important;
     border:1px solid rgba(255,255,255,0.15) !important;
     color:white !important;
     border-radius:10px !important;
@@ -86,20 +72,21 @@ input, textarea{
 
 /* ===== SELECTBOX ===== */
 [data-baseweb="select"]{
-    background:rgba(255,255,255,0.05) !important;
+    background: rgba(255,255,255,0.07) !important;
     border-radius:10px !important;
 }
 
-[data-baseweb="menu"]{
-    background:#0b1220 !important;
+/* Dropdown menu */
+div[data-baseweb="menu"]{
+    background:white !important;
 }
 
-[data-baseweb="menu"] div{
-    color:white !important;
+div[data-baseweb="menu"] div{
+    color:black !important;
 }
 
-[data-baseweb="menu"] div:hover{
-    background:rgba(99,102,241,0.25) !important;
+div[data-baseweb="menu"] div:hover{
+    background:#f1f5f9 !important;
 }
 
 
@@ -109,7 +96,7 @@ input, textarea{
     border-radius:12px;
     padding:10px;
     font-weight:700;
-    border:1px solid rgba(255,255,255,0.2);
+    border:none;
     background:linear-gradient(135deg,#6366f1,#10b981);
     color:white;
 }
@@ -123,45 +110,31 @@ input, textarea{
 /* ===== METRICS ===== */
 [data-testid="stMetric"]{
     background:rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.1);
     border-radius:14px;
-    padding:12px;
+    padding:14px;
 }
 
 
 /* ===== TABS ===== */
 .stTabs [data-baseweb="tab"]{
-    border-radius:10px;
     background:rgba(255,255,255,0.05);
+    border-radius:10px;
 }
 
 .stTabs [aria-selected="true"]{
-    background:rgba(255,255,255,0.12) !important;
+    background:rgba(255,255,255,0.15) !important;
 }
 
 
 /* ===== DATAFRAME ===== */
 [data-testid="stDataFrame"]{
     border-radius:12px;
-    border:1px solid rgba(255,255,255,0.10);
-}
-/* Fix dropdown option visibility */
-div[data-baseweb="menu"] {
-    background-color: #ffffff !important;
-}
-
-div[data-baseweb="menu"] div {
-    color: #000000 !important;
-}
-
-div[data-baseweb="menu"] div:hover {
-    background-color: #f0f0f0 !important;
-    color: #000000 !important;
+    border:1px solid rgba(255,255,255,0.1);
 }
 
 </style>
 """, unsafe_allow_html=True)
-
 
 
 # ---------------- Load dataset ----------------
