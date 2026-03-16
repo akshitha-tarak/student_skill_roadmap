@@ -760,8 +760,8 @@ def generate_structured_roadmap(info, df):
         info["interest"], info["skill_level"], info["budget"]
 )
 # Use course database resources
-      resources = course_resources
-      projects = course_projects
+    resources = course_resources
+    projects = course_projects
 
 def roadmap_to_markdown(name, info, roadmap):
     def s(x):
