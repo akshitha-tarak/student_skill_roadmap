@@ -14,148 +14,76 @@ from datetime import date
 # ---------------- Page config ----------------
 st.set_page_config(page_title="Student Skill Roadmap", layout="centered")
 # ---------------- UI THEME (HTML/CSS) ----------------
-
-
-
-
-
-
-
-
-
-/* ===== METRICS ===== */
-
 st.markdown("""
 <style>
 
-/* ===== GLOBAL APP STYLE ===== */
-.stApp{
-    background: linear-gradient(120deg,#0f172a,#020617,#020617,#1e3a8a);
-    color:#e2e8f0;
-    font-family: 'Inter', sans-serif;
+/* ===== MAIN BACKGROUND ===== */
+[data-testid="stAppViewContainer"]{
+    background: linear-gradient(135deg,#1e3a8a,#0f172a,#020617);
 }
 
-/* ===== PAGE WIDTH ===== */
-.block-container{
-    max-width:1100px;
-    padding-top:2rem;
+/* ===== TEXT COLOR ===== */
+[data-testid="stAppViewContainer"] *{
+    color:#f8fafc;
 }
 
-/* ===== HIDE STREAMLIT MENU ===== */
-#MainMenu {visibility:hidden;}
-footer {visibility:hidden;}
-header {visibility:hidden;}
-
-/* ===== HEADINGS ===== */
-h1{
-    font-weight:800;
-    letter-spacing:1px;
+/* ===== LABELS ===== */
+label{
+    color:#cbd5f5 !important;
+    font-weight:600;
 }
 
-h2,h3{
-    font-weight:700;
-}
-
-/* ===== GLASS CARD ===== */
-.card{
-    background: rgba(255,255,255,0.06);
-    border:1px solid rgba(255,255,255,0.1);
-    border-radius:18px;
-    padding:22px;
-    backdrop-filter: blur(10px);
-    box-shadow:0 8px 30px rgba(0,0,0,0.3);
-    transition:0.3s;
-}
-
-.card:hover{
-    transform:translateY(-3px);
-}
-
-/* ===== INPUT FIELDS ===== */
-input, textarea{
+/* ===== INPUT BOX ===== */
+input{
     background: rgba(255,255,255,0.08) !important;
-    border:1px solid rgba(255,255,255,0.15) !important;
     color:white !important;
-    border-radius:12px !important;
+    border-radius:10px !important;
 }
 
-/* ===== SELECT BOX ===== */
+/* ===== SELECTBOX ===== */
 [data-baseweb="select"]{
     background: rgba(255,255,255,0.08) !important;
-    border-radius:12px !important;
-}
-
-/* Dropdown */
-div[data-baseweb="menu"]{
-    background:white !important;
-}
-
-div[data-baseweb="menu"] div{
-    color:black !important;
+    border-radius:10px !important;
 }
 
 /* ===== BUTTON ===== */
-.stButton>button{
-    width:100%;
-    border-radius:14px;
-    padding:12px;
-    font-weight:700;
-    border:none;
-
+.stButton > button{
     background:linear-gradient(135deg,#6366f1,#22c55e);
     color:white;
-
-    transition:all 0.25s ease;
+    border-radius:12px;
+    padding:10px;
+    font-weight:700;
 }
 
-.stButton>button:hover{
-    transform:translateY(-2px);
-    box-shadow:0 6px 18px rgba(0,0,0,0.3);
-    filter:brightness(1.1);
-}
-
-/* ===== METRICS ===== */
+/* ===== METRIC ===== */
 [data-testid="stMetric"]{
-    background: rgba(255,255,255,0.05);
-    border:1px solid rgba(255,255,255,0.1);
-    border-radius:16px;
-    padding:18px;
-    box-shadow:0 4px 20px rgba(0,0,0,0.2);
-}
-
-/* ===== TABS ===== */
-.stTabs [data-baseweb="tab"]{
-    background:rgba(255,255,255,0.06);
-    border-radius:10px;
-    padding:8px;
-}
-
-.stTabs [aria-selected="true"]{
-    background:rgba(255,255,255,0.18) !important;
+    background:rgba(255,255,255,0.05);
+    padding:14px;
+    border-radius:14px;
 }
 
 /* ===== DATAFRAME ===== */
 [data-testid="stDataFrame"]{
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,0.1);
-}
-
-/* ===== SCROLLBAR ===== */
-::-webkit-scrollbar{
-    width:8px;
-}
-
-::-webkit-scrollbar-thumb{
-    background:#475569;
-    border-radius:10px;
-}
-
-::-webkit-scrollbar-thumb:hover{
-    background:#64748b;
+    border-radius:12px;
 }
 
 </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+<h1 style='text-align:center; font-size:40px'>
+🎓 Student Skill Roadmap Generator
+</h1>
+""", unsafe_allow_html=True)
+
+
+
+
+
+
+
+
+/* ===== METRICS ===== */
+
 
 
 # ---------------- Load dataset ----------------
