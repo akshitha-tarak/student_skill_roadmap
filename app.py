@@ -14,7 +14,8 @@ from datetime import date
 # ---------------- Page config ----------------
 st.set_page_config(page_title="Student Skill Roadmap", layout="centered")
 # ---------------- UI THEME (HTML/CSS) ----------------
-st.markdown("""
+
+ st.markdown("""
 <style>
 
 /* ===== APP BACKGROUND ===== */
@@ -25,106 +26,97 @@ st.markdown("""
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    color: #f8fafc;
 }
 
-/* ===== MAIN CONTENT AREA ===== */
+/* ===== MAIN CONTAINER ===== */
 .block-container{
     max-width: 1050px;
     padding-top: 2rem;
     padding-bottom: 2rem;
 }
 
-/* ===== GENERAL TEXT ===== */
-html, body, p, span, div, li, label{
+/* ===== TEXT ===== */
+[data-testid="stAppViewContainer"]{
     color: #e5e7eb;
 }
 
-h1, h2, h3, h4, h5, h6{
+h1, h2, h3, h4{
     color: #f8fafc !important;
-    font-weight: 700 !important;
+    font-weight: 700;
 }
 
-/* ===== CUSTOM CARD ===== */
+/* ===== CARD ===== */
 .card{
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 18px;
+    border-radius: 16px;
     padding: 18px;
     margin-bottom: 16px;
     backdrop-filter: blur(10px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
 }
 
 .card-title{
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #f8fafc;
-    margin-bottom: 6px;
 }
 
 .card-sub{
     color: #cbd5e1;
-    margin: 0;
 }
 
 /* ===== INPUTS ===== */
 .stTextInput input,
 .stNumberInput input,
 .stTextArea textarea,
-div[data-baseweb="select"] > div,
-div[data-baseweb="base-input"]{
+div[data-baseweb="select"] > div{
     background: rgba(255,255,255,0.08) !important;
     color: #f8fafc !important;
-    border: 1px solid rgba(255,255,255,0.15) !important;
-    border-radius: 12px !important;
-}
-
-/* ===== SELECT DROPDOWN ===== */
-div[data-baseweb="menu"]{
-    background: #ffffff !important;
     border-radius: 10px !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
 }
 
-div[data-baseweb="menu"] *{
-    color: #111827 !important;
+/* ===== DROPDOWN MENU ===== */
+div[data-baseweb="menu"]{
+    background: white !important;
+}
+
+div[data-baseweb="menu"] div{
+    color: black !important;
+}
+
+div[data-baseweb="menu"] div:hover{
+    background: #f1f5f9 !important;
 }
 
 /* ===== BUTTON ===== */
 .stButton > button{
     width: 100%;
-    border: none;
     border-radius: 12px;
-    padding: 0.7rem 1rem;
+    padding: 10px;
     font-weight: 700;
+    border: none;
     color: white !important;
-    background: linear-gradient(135deg,#6366f1,#22c55e) !important;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    background: linear-gradient(135deg,#6366f1,#22c55e);
 }
 
 .stButton > button:hover{
-    filter: brightness(1.08);
     transform: translateY(-1px);
+    filter: brightness(1.1);
 }
 
 /* ===== METRICS ===== */
 [data-testid="stMetric"]{
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 16px;
-    padding: 14px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 12px;
 }
 
 /* ===== TABS ===== */
-.stTabs [data-baseweb="tab-list"]{
-    gap: 10px;
-}
-
 .stTabs [data-baseweb="tab"]{
     background: rgba(255,255,255,0.08);
-    color: #e2e8f0 !important;
-    border-radius: 14px 14px 0 0;
-    padding: 10px 18px;
+    border-radius: 10px;
+    color: #e5e7eb !important;
 }
 
 .stTabs [aria-selected="true"]{
@@ -132,116 +124,46 @@ div[data-baseweb="menu"] *{
     color: white !important;
 }
 
-/* ===== EXPANDER: THIS IS THE IMPORTANT FIX ===== */
-details[data-testid="stExpander"]{
-    background: rgba(4,18,45,0.72) !important;
-    border: 1px solid rgba(255,255,255,0.10) !important;
-    border-radius: 16px !important;
-    overflow: hidden !important;
-    margin-bottom: 12px !important;
-    backdrop-filter: blur(10px);
-}
-
-/* expander header */
-details[data-testid="stExpander"] > summary{
-    background: rgba(255,255,255,0.06) !important;
-    color: #f8fafc !important;
-    padding: 16px 18px !important;
-    border-radius: 16px !important;
-    font-weight: 700 !important;
-    list-style: none !important;
-}
-
-/* hide default white marker spacing issues */
-details[data-testid="stExpander"] > summary::-webkit-details-marker{
-    display: none;
-}
-
-/* expander content area */
-details[data-testid="stExpander"] > div{
-    background: rgba(2,6,23,0.55) !important;
-    color: #e5e7eb !important;
-    padding: 14px 18px 16px 18px !important;
-    border-top: 1px solid rgba(255,255,255,0.08) !important;
-}
-
-/* content text inside expander */
-details[data-testid="stExpander"] p,
-details[data-testid="stExpander"] li,
-details[data-testid="stExpander"] div,
-details[data-testid="stExpander"] span{
-    color: #e5e7eb !important;
-}
-
-/* ===== ALERT / INFO BOX ===== */
-[data-testid="stAlert"]{
-    background: rgba(59,130,246,0.12) !important;
-    border: 1px solid rgba(96,165,250,0.25) !important;
-    color: #eaf2ff !important;
-    border-radius: 14px !important;
-}
-
-/* ===== DATAFRAME ===== */
-[data-testid="stDataFrame"]{
-    border-radius: 14px;
-    overflow: hidden;
-}
-
-/* ===== HIDE DEFAULT STREAMLIT CHROME ===== */
-#MainMenu, footer, header{
-    visibility: hidden;
-}
-/* ===== FINAL EXPANDER FIX (WORKS 100%) ===== */
-
-/* main expander container */
+/* ===== EXPANDER (WEEK1, WEEK2 FIX) ===== */
 [data-testid="stExpander"]{
     background: rgba(4,18,45,0.7) !important;
-    border-radius: 16px !important;
+    border-radius: 14px !important;
     border: 1px solid rgba(255,255,255,0.1) !important;
     overflow: hidden !important;
 }
 
-/* HEADER (this is your white bar) */
 [data-testid="stExpander"] > div:first-child{
-    background: rgba(255,255,255,0.06) !important;
+    background: rgba(255,255,255,0.08) !important;
     color: #f8fafc !important;
-    padding: 14px 16px !important;
-    font-weight: 600 !important;
-    border-radius: 16px !important;
+    font-weight: 600;
 }
 
-/* remove hover white flash */
-[data-testid="stExpander"] > div:first-child:hover{
-    background: rgba(255,255,255,0.12) !important;
-}
-
-/* CONTENT */
 [data-testid="stExpander"] > div:nth-child(2){
     background: rgba(2,6,23,0.6) !important;
     color: #e5e7eb !important;
-    padding: 12px 16px !important;
-}
-/* ===== NUCLEAR FIX FOR EXPANDER WHITE BAR ===== */
-
-/* target EVERYTHING inside expander */
-[data-testid="stExpander"] *{
-    background-color: transparent !important;
 }
 
-/* force header */
-[data-testid="stExpander"] > div:first-child{
-    background: rgba(255,255,255,0.08) !important;
-    color: white !important;
+/* ===== ALERT ===== */
+[data-testid="stAlert"]{
+    background: rgba(59,130,246,0.12);
+    border-radius: 12px;
 }
 
-/* force content */
-[data-testid="stExpander"] > div:nth-child(2){
-    background: rgba(2,6,23,0.7) !important;
-    color: #e5e7eb !important;
+/* ===== DATAFRAME ===== */
+[data-testid="stDataFrame"]{
+    border-radius: 12px;
+}
+
+/* ===== HIDE STREAMLIT UI ===== */
+#MainMenu, footer, header{
+    visibility: hidden;
 }
 
 </style>
 """, unsafe_allow_html=True)
+
+
+
 
 # ---------------- Load dataset ----------------
 @st.cache_data
