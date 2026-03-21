@@ -1221,11 +1221,6 @@ def compute_skill_gap(required_skills, known_skills):
     missing = [s for s in required_skills if s not in known_skills]
     return known, missing
 
-def compute_skill_gap(required_skills, known_skills):
-    known = [s for s in required_skills if s in known_skills]
-    missing = [s for s in required_skills if s not in known_skills]
-    return known, missing
-
 
 # ---------------- UI ----------------
 # st.title("🎓 Personalized Student Skill Roadmap")
@@ -1459,8 +1454,9 @@ if st.button("🔍 Generate My Roadmap"):
         ["Select a role"] + list(JOB_SKILL_ANALYSIS.keys()),
         key="skill_analysis_role"
     )
+    st.write("Selected:", job_choice)
     
-    if job_choice != "Select a role":
+    if job_choice and job_choice != "Select a role":
         job_info = JOB_SKILL_ANALYSIS[job_choice]
     
         st.subheader("🧠 Required Skills")
