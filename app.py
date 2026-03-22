@@ -1324,32 +1324,15 @@ if st.button("🔍 Generate My Roadmap"):
     col1.metric("GPA", f"{gpa:.1f}")
     col2.metric("Study Hours/day", f"{study_hours}")
     col3.metric("Sleep Hours", f"{sleep_hours}")
-
-    # A simple "readiness" score (just UI)
-    # readiness = 0
-    # readiness += 30 if gpa >= 7 else 20 if gpa >= 6 else 10
-    # readiness += 25 if study_hours >= 4 else 15 if study_hours >= 3 else 8
-    # readiness += 20 if stress_level != "High" else 8
-    # readiness += 15 if confusion_level != "High" else 8
-    # readiness += 10 if communication in ("Average", "Good") else 5
-    # readiness = min(readiness, 100)
-
-    # st.write("### 📈 Readiness Score")
-    # st.progress(readiness / 100)
-    # st.caption("This score is a UI indicator (not an official assessment).")
     score = readiness_breakdown(student_info)
-
     st.markdown("### 📈 Readiness Score (Breakdown)")
     st.progress(score["Total"] / 100)
     st.caption("UI indicator (not an official assessment).")
-    
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Academics", f'{score["Academics"]}/30')
     c2.metric("Skills", f'{score["Skills"]}/30')
     c3.metric("Routine", f'{score["Routine"]}/20')
     c4.metric("Communication", f'{score["Communication"]}/20')
-
-
     # tab1, tab2, tab3, tab4 = st.tabs(["🧭 Roadmap", "🗓️ 4-Week Plan", "🧪 Projects", "📚 Resources"])
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "🧭 Roadmap",
