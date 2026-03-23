@@ -120,8 +120,8 @@ st.markdown("""
 #     # 🔙 optional back button
 #     if st.button("⬅ Back"):
 #         st.session_state.page = "home"
-
-    st.title("🧠 Build Your Roadmap")
+# 
+    # st.title("🧠 Build Your Roadmap")
     @st.cache_data
     def load_data():
         df = pd.read_csv("student_performance_final.csv")
