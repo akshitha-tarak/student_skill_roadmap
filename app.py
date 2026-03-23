@@ -67,7 +67,7 @@ st.set_page_config(page_title="Student Skill Roadmap", layout="centered")
 #     border-radius: 10px;
 # }
 
-/* ===== INPUT BOX ===== */
+# /* ===== INPUT BOX ===== */
 # .stTextInput input, .stNumberInput input {
 #     background-color: #1e293b !important;
 #     color: white !important;
