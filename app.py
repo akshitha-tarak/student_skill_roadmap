@@ -95,177 +95,48 @@ div[data-testid="stExpander"] {
     color: white;
     border-radius: 10px;
 }
+st.markdown("""
+<style>
+
+/* ===== INPUT LABELS (VERY IMPORTANT FIX) ===== */
+label, .stTextInput label, .stNumberInput label, .stSelectbox label {
+    color: #f1f5f9 !important;   /* light color */
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* ===== PLACEHOLDER TEXT ===== */
+input::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* ===== INPUT TEXT COLOR ===== */
+.stTextInput input, 
+.stNumberInput input, 
+.stTextArea textarea {
+    color: #ffffff !important;
+}
+
+/* ===== SELECTBOX TEXT FIX ===== */
+.stSelectbox div {
+    color: white !important;
+}
+
+/* ===== RADIO / CHECKBOX LABELS ===== */
+.stRadio label, .stCheckbox label {
+    color: #e2e8f0 !important;
+}
+
+/* ===== SLIDER LABEL ===== */
+.stSlider label {
+    color: #e2e8f0 !important;
+}
 
 </style>
 """, unsafe_allow_html=True)
-# st.markdown("""
-#  <style>
- 
-#  /* ===== APP BACKGROUND ===== */
-#  [data-testid="stAppViewContainer"]{
-#      background:
-#          linear-gradient(rgba(15,23,42,0.88), rgba(2,6,23,0.94)),
-#          url("https://images.unsplash.com/photo-1555066931-4365d14bab8c");
-#      background-size: cover;
-#      background-position: center;
-#      background-attachment: fixed;
-#  }
- 
-#  /* ===== MAIN CONTAINER ===== */
-#   .block-container{
-#       max-width: 1050px;
-#       padding-top: 2rem;
-#       padding-bottom: 2rem;
-#  }
 
-# /* ===== TEXT ===== */
-#  [data-testid="stAppViewContainer"]{
-#      color: #e5e7eb;
-#  }
- 
- # h1, h2, h3, h4{
- #     color: #f8fafc !important;
- #     font-weight: 700;
- # }
- 
- # /* ===== CARD ===== */
- # .card{
- #     background: rgba(255,255,255,0.06);
- #     border: 1px solid rgba(255,255,255,0.12);
- #     border-radius: 16px;
- #     padding: 18px;
- #     margin-bottom: 16px;
- #     backdrop-filter: blur(10px);
- # }
-
- # .card-title{
- #     font-size: 1.1rem;
- #     font-weight: 700;
- #     color: #f8fafc;
- # }
- 
- # .card-sub{
- #     color: #cbd5e1;
- # }
- 
- # /* ===== INPUTS ===== */
- # .stTextInput input,
- # .stNumberInput input,
- # .stTextArea textarea,
- # div[data-baseweb="select"] > div{
- #     background: rgba(255,255,255,0.08) !important;
- #     color: #f8fafc !important;
- #     border-radius: 10px !important;
- #     border: 1px solid rgba(255,255,255,0.15) !important;
- # }
- 
- # /* ===== DROPDOWN MENU ===== */
- #  div[data-baseweb="menu"]{
- #      background: white !important;
- # }
- 
- # div[data-baseweb="menu"] div{
- #     color: black !important;
- # }
- 
- #  div[data-baseweb="menu"] div:hover{
- #      background: #f1f5f9 !important;
- # }
-
-# /* ===== BUTTON ===== */
-#  .stButton > button{
-#      width: 100%;
-#      border-radius: 12px;
-#      padding: 10px;
-#      font-weight: 700;
-#      border: none;
-#      color: white !important;
-#      background: linear-gradient(135deg,#6366f1,#22c55e);
-#  }
- 
-#  .stButton > button:hover{
-#      transform: translateY(-1px);
-#      filter: brightness(1.1);
-#  }
-
-# /* ===== METRICS ===== */
-#  [data-testid="stMetric"]{
-#      background: rgba(255,255,255,0.05);
-#      border-radius: 12px;
-#      padding: 12px;
-#  }
- 
-#  /* ===== TABS ===== */
-#  .stTabs [data-baseweb="tab"]{
-#      background: rgba(255,255,255,0.08);
-#      border-radius: 10px;
-#      color: #e5e7eb !important;
-#  }
-
- # .stTabs [aria-selected="true"]{
- #     background: linear-gradient(135deg,#6366f1,#22c55e) !important;
- #     color: white !important;
- # }
- 
- # /* ===== EXPANDER (WEEK1, WEEK2 FIX) ===== */
- # [data-testid="stExpander"]{
- #     background: rgba(4,18,45,0.7) !important;
- #     border-radius: 14px !important;
- #     border: 1px solid rgba(255,255,255,0.1) !important;
- #     overflow: hidden !important;
- # }
-
- # [data-testid="stExpander"] > div:first-child{
- #     background: rgba(255,255,255,0.08) !important;
- #     color: #f8fafc !important;
- #     font-weight: 600;
- # }
- 
- # [data-testid="stExpander"] > div:nth-child(2){
- #     background: rgba(2,6,23,0.6) !important;
- #     color: #e5e7eb !important;
- # }
-
-# /* ===== ALERT ===== */
-#  [data-testid="stAlert"]{
-#      background: rgba(59,130,246,0.12);
-#      border-radius: 12px;
-#  }
- 
-#  /* ===== DATAFRAME ===== */
-#  [data-testid="stDataFrame"]{
-#      border-radius: 12px;
-#  }
-
-# /* ===== HIDE STREAMLIT UI ===== */
-#  #MainMenu, footer, header{
-#      visibility: hidden;
-#  }
-#  /* ===== NUCLEAR FIX FOR EXPANDER WHITE BAR ===== */
-
-# /* target EVERYTHING inside expander */
-# [data-testid="stExpander"] *{
-#     background-color: transparent !important;
-# }
-
-# /* force header */
-# [data-testid="stExpander"] > div:first-child{
-#     background: rgba(255,255,255,0.08) !important;
-#     color: white !important;
-# }
-
-# /* force content */
-# [data-testid="stExpander"] > div:nth-child(2){
-#     background: rgba(2,6,23,0.7) !important;
-#     color: #e5e7eb !important;
-# }
- 
- # </style>
- # """, unsafe_allow_html=True)
-
-
-
-
+</style>
+""", unsafe_allow_html=True)
 # ---------------- Load dataset ----------------
 @st.cache_data
 def load_data():
