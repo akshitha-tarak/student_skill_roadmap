@@ -28,154 +28,154 @@ st.markdown("""
      background-attachment: fixed;
  }
  
- /* ===== MAIN CONTAINER ===== */
-  .block-container{
-      max-width: 1050px;
-      padding-top: 2rem;
-      padding-bottom: 2rem;
- }
+#  /* ===== MAIN CONTAINER ===== */
+#   .block-container{
+#       max-width: 1050px;
+#       padding-top: 2rem;
+#       padding-bottom: 2rem;
+#  }
 
-/* ===== TEXT ===== */
- [data-testid="stAppViewContainer"]{
-     color: #e5e7eb;
- }
+# /* ===== TEXT ===== */
+#  [data-testid="stAppViewContainer"]{
+#      color: #e5e7eb;
+#  }
  
- h1, h2, h3, h4{
-     color: #f8fafc !important;
-     font-weight: 700;
- }
+ # h1, h2, h3, h4{
+ #     color: #f8fafc !important;
+ #     font-weight: 700;
+ # }
  
- /* ===== CARD ===== */
- .card{
-     background: rgba(255,255,255,0.06);
-     border: 1px solid rgba(255,255,255,0.12);
-     border-radius: 16px;
-     padding: 18px;
-     margin-bottom: 16px;
-     backdrop-filter: blur(10px);
- }
+ # /* ===== CARD ===== */
+ # .card{
+ #     background: rgba(255,255,255,0.06);
+ #     border: 1px solid rgba(255,255,255,0.12);
+ #     border-radius: 16px;
+ #     padding: 18px;
+ #     margin-bottom: 16px;
+ #     backdrop-filter: blur(10px);
+ # }
 
- .card-title{
-     font-size: 1.1rem;
-     font-weight: 700;
-     color: #f8fafc;
- }
+ # .card-title{
+ #     font-size: 1.1rem;
+ #     font-weight: 700;
+ #     color: #f8fafc;
+ # }
  
- .card-sub{
-     color: #cbd5e1;
- }
+ # .card-sub{
+ #     color: #cbd5e1;
+ # }
  
- /* ===== INPUTS ===== */
- .stTextInput input,
- .stNumberInput input,
- .stTextArea textarea,
- div[data-baseweb="select"] > div{
-     background: rgba(255,255,255,0.08) !important;
-     color: #f8fafc !important;
-     border-radius: 10px !important;
-     border: 1px solid rgba(255,255,255,0.15) !important;
- }
+ # /* ===== INPUTS ===== */
+ # .stTextInput input,
+ # .stNumberInput input,
+ # .stTextArea textarea,
+ # div[data-baseweb="select"] > div{
+ #     background: rgba(255,255,255,0.08) !important;
+ #     color: #f8fafc !important;
+ #     border-radius: 10px !important;
+ #     border: 1px solid rgba(255,255,255,0.15) !important;
+ # }
  
- /* ===== DROPDOWN MENU ===== */
-  div[data-baseweb="menu"]{
-      background: white !important;
- }
+ # /* ===== DROPDOWN MENU ===== */
+ #  div[data-baseweb="menu"]{
+ #      background: white !important;
+ # }
  
- div[data-baseweb="menu"] div{
-     color: black !important;
- }
+ # div[data-baseweb="menu"] div{
+ #     color: black !important;
+ # }
  
-  div[data-baseweb="menu"] div:hover{
-      background: #f1f5f9 !important;
- }
+ #  div[data-baseweb="menu"] div:hover{
+ #      background: #f1f5f9 !important;
+ # }
 
-/* ===== BUTTON ===== */
- .stButton > button{
-     width: 100%;
-     border-radius: 12px;
-     padding: 10px;
-     font-weight: 700;
-     border: none;
-     color: white !important;
-     background: linear-gradient(135deg,#6366f1,#22c55e);
- }
+# /* ===== BUTTON ===== */
+#  .stButton > button{
+#      width: 100%;
+#      border-radius: 12px;
+#      padding: 10px;
+#      font-weight: 700;
+#      border: none;
+#      color: white !important;
+#      background: linear-gradient(135deg,#6366f1,#22c55e);
+#  }
  
- .stButton > button:hover{
-     transform: translateY(-1px);
-     filter: brightness(1.1);
- }
+#  .stButton > button:hover{
+#      transform: translateY(-1px);
+#      filter: brightness(1.1);
+#  }
 
-/* ===== METRICS ===== */
- [data-testid="stMetric"]{
-     background: rgba(255,255,255,0.05);
-     border-radius: 12px;
-     padding: 12px;
- }
+# /* ===== METRICS ===== */
+#  [data-testid="stMetric"]{
+#      background: rgba(255,255,255,0.05);
+#      border-radius: 12px;
+#      padding: 12px;
+#  }
  
- /* ===== TABS ===== */
- .stTabs [data-baseweb="tab"]{
-     background: rgba(255,255,255,0.08);
-     border-radius: 10px;
-     color: #e5e7eb !important;
- }
+#  /* ===== TABS ===== */
+#  .stTabs [data-baseweb="tab"]{
+#      background: rgba(255,255,255,0.08);
+#      border-radius: 10px;
+#      color: #e5e7eb !important;
+#  }
 
- .stTabs [aria-selected="true"]{
-     background: linear-gradient(135deg,#6366f1,#22c55e) !important;
-     color: white !important;
- }
+ # .stTabs [aria-selected="true"]{
+ #     background: linear-gradient(135deg,#6366f1,#22c55e) !important;
+ #     color: white !important;
+ # }
  
- /* ===== EXPANDER (WEEK1, WEEK2 FIX) ===== */
- [data-testid="stExpander"]{
-     background: rgba(4,18,45,0.7) !important;
-     border-radius: 14px !important;
-     border: 1px solid rgba(255,255,255,0.1) !important;
-     overflow: hidden !important;
- }
+ # /* ===== EXPANDER (WEEK1, WEEK2 FIX) ===== */
+ # [data-testid="stExpander"]{
+ #     background: rgba(4,18,45,0.7) !important;
+ #     border-radius: 14px !important;
+ #     border: 1px solid rgba(255,255,255,0.1) !important;
+ #     overflow: hidden !important;
+ # }
 
- [data-testid="stExpander"] > div:first-child{
-     background: rgba(255,255,255,0.08) !important;
-     color: #f8fafc !important;
-     font-weight: 600;
- }
+ # [data-testid="stExpander"] > div:first-child{
+ #     background: rgba(255,255,255,0.08) !important;
+ #     color: #f8fafc !important;
+ #     font-weight: 600;
+ # }
  
- [data-testid="stExpander"] > div:nth-child(2){
-     background: rgba(2,6,23,0.6) !important;
-     color: #e5e7eb !important;
- }
+ # [data-testid="stExpander"] > div:nth-child(2){
+ #     background: rgba(2,6,23,0.6) !important;
+ #     color: #e5e7eb !important;
+ # }
 
-/* ===== ALERT ===== */
- [data-testid="stAlert"]{
-     background: rgba(59,130,246,0.12);
-     border-radius: 12px;
- }
+# /* ===== ALERT ===== */
+#  [data-testid="stAlert"]{
+#      background: rgba(59,130,246,0.12);
+#      border-radius: 12px;
+#  }
  
- /* ===== DATAFRAME ===== */
- [data-testid="stDataFrame"]{
-     border-radius: 12px;
- }
+#  /* ===== DATAFRAME ===== */
+#  [data-testid="stDataFrame"]{
+#      border-radius: 12px;
+#  }
 
-/* ===== HIDE STREAMLIT UI ===== */
- #MainMenu, footer, header{
-     visibility: hidden;
- }
- /* ===== NUCLEAR FIX FOR EXPANDER WHITE BAR ===== */
+# /* ===== HIDE STREAMLIT UI ===== */
+#  #MainMenu, footer, header{
+#      visibility: hidden;
+#  }
+#  /* ===== NUCLEAR FIX FOR EXPANDER WHITE BAR ===== */
 
-/* target EVERYTHING inside expander */
-[data-testid="stExpander"] *{
-    background-color: transparent !important;
-}
+# /* target EVERYTHING inside expander */
+# [data-testid="stExpander"] *{
+#     background-color: transparent !important;
+# }
 
-/* force header */
-[data-testid="stExpander"] > div:first-child{
-    background: rgba(255,255,255,0.08) !important;
-    color: white !important;
-}
+# /* force header */
+# [data-testid="stExpander"] > div:first-child{
+#     background: rgba(255,255,255,0.08) !important;
+#     color: white !important;
+# }
 
-/* force content */
-[data-testid="stExpander"] > div:nth-child(2){
-    background: rgba(2,6,23,0.7) !important;
-    color: #e5e7eb !important;
-}
+# /* force content */
+# [data-testid="stExpander"] > div:nth-child(2){
+#     background: rgba(2,6,23,0.7) !important;
+#     color: #e5e7eb !important;
+# }
  
  </style>
  """, unsafe_allow_html=True)
