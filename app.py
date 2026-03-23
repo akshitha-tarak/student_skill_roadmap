@@ -15,18 +15,18 @@ from datetime import date
 st.set_page_config(page_title="Student Skill Roadmap", layout="centered")
 # ---------------- UI THEME (HTML/CSS) ----------------
 
-st.markdown("""
- <style>
+# st.markdown("""
+#  <style>
  
- /* ===== APP BACKGROUND ===== */
- [data-testid="stAppViewContainer"]{
-     background:
-         linear-gradient(rgba(15,23,42,0.88), rgba(2,6,23,0.94)),
-         url("https://images.unsplash.com/photo-1555066931-4365d14bab8c");
-     background-size: cover;
-     background-position: center;
-     background-attachment: fixed;
- }
+#  /* ===== APP BACKGROUND ===== */
+#  [data-testid="stAppViewContainer"]{
+#      background:
+#          linear-gradient(rgba(15,23,42,0.88), rgba(2,6,23,0.94)),
+#          url("https://images.unsplash.com/photo-1555066931-4365d14bab8c");
+#      background-size: cover;
+#      background-position: center;
+#      background-attachment: fixed;
+#  }
  
 #  /* ===== MAIN CONTAINER ===== */
 #   .block-container{
@@ -177,8 +177,8 @@ st.markdown("""
 #     color: #e5e7eb !important;
 # }
  
- </style>
- """, unsafe_allow_html=True)
+ # </style>
+ # """, unsafe_allow_html=True)
 
 
 
