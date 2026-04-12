@@ -981,7 +981,7 @@ if st.session_state.roadmap_data is not None:
     # ── Tab 5 : Skill Gap Analysis ──
     with tab5:
         st.markdown('<div class="sec-pill">🧩 Skill Gap Analysis</div>', unsafe_allow_html=True)
-        st.markdown("<p style="font-size:14px;color:#64748b;margin-bottom:20px;">Select a job role, then tick the skills you already know — we'll show your match % and what to learn next.</p>", unsafe_allow_html=True)
+        st.markdown("""<p style='font-size:14px;color:#64748b;margin-bottom:20px;'>Select a job role, then tick the skills you already know — we will show your match % and what to learn next.</p>""", unsafe_allow_html=True)
 
         job_roles = ["— Select a role —"] + list(JOB_SKILL_ANALYSIS.keys())
         job_choice = st.selectbox("🎯 Target Job Role", job_roles, key="sg_role_tab")
