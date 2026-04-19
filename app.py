@@ -3,803 +3,386 @@ import pandas as pd
 import random
 from datetime import date
 
-# ─────────────────────────────────────────────
-# PAGE CONFIG  (must be first Streamlit call)
-# ─────────────────────────────────────────────
-st.set_page_config(
-    page_title=" Personalized SkillRoadmap",
-    page_icon="🎯",
-    layout="wide",
-)
+st.set_page_config(page_title="SkillRoadmap", page_icon="🎯", layout="wide")
 
-# ─────────────────────────────────────────────
-# GLOBAL CSS
-# ─────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-
-/* ── root vars ── */
-:root {
-  --bg:        #020817;
-  --surface:   rgba(15,23,42,0.72);
-  --border:    rgba(99,102,241,0.22);
-  --indigo:    #6366f1;
-  --violet:    #8b5cf6;
-  --emerald:   #34d399;
-  --sky:       #38bdf8;
-  --amber:     #fbbf24;
-  --rose:      #fb7185;
-  --text:      #e2e8f0;
-  --muted:     #64748b;
-}
-
-/* ── global ── */
-html, body, [class*="css"] {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
-  background: var(--bg) !important;
-  color: var(--text) !important;
-}
 #MainMenu, footer, header { visibility: hidden; }
 .block-container { padding-top: 0 !important; max-width: 100% !important; }
+html, body, [class*="css"] { font-family: 'Plus Jakarta Sans', sans-serif !important; }
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--indigo); border-radius: 99px; }
-
-/* ────────────────────────────────────
-   LANDING PAGE
-──────────────────────────────────── */
 .landing {
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse 80% 60% at 15% 55%,  rgba(99,102,241,0.38) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 85% 25%,  rgba(139,92,246,0.30) 0%, transparent 55%),
-    radial-gradient(ellipse 70% 55% at 55% 90%,  rgba(16,185,129,0.18) 0%, transparent 58%),
-    radial-gradient(ellipse 50% 40% at 80% 75%,  rgba(56,189,248,0.12) 0%, transparent 55%),
-    #020817;
-  padding-bottom: 80px;
+  background: radial-gradient(ellipse 80% 60% at 15% 55%, rgba(99,102,241,.38) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 25%, rgba(139,92,246,.30) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 55% at 55% 90%, rgba(16,185,129,.18) 0%, transparent 58%), #020817;
+  padding-bottom: 80px; color: #e2e8f0;
 }
-.nav {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 48px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.nav-logo {
-  font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800;
-  background: linear-gradient(135deg, #a5b4fc, #34d399);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.nav-badge {
-  background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.30);
-  color: #a5b4fc; font-size: 11px; font-weight: 600; padding: 5px 14px;
-  border-radius: 999px; letter-spacing: 0.06em;
-}
-.hero { text-align: center; padding: 72px 24px 48px; }
-.confused-tag {
-  display: inline-block;
-  background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.30);
-  color: #fcd34d; font-size: 13px; font-weight: 600;
-  padding: 6px 18px; border-radius: 999px; margin-bottom: 28px;
-  letter-spacing: 0.04em; animation: fadeDown 0.6s ease both;
-}
-@keyframes fadeDown {
-  from { opacity:0; transform:translateY(-12px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-.hero-h1 {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(32px, 6vw, 60px); font-weight: 800; line-height: 1.08;
-  margin-bottom: 22px; animation: fadeDown 0.7s ease 0.1s both;
-}
-.hero-h1 .line1 {
-  display: block;
-  background: linear-gradient(135deg, #fff 30%, #c7d2fe);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.hero-h1 .line2 {
-  display: block;
-  background: linear-gradient(135deg, #a5b4fc, #34d399 70%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.hero-sub {
-  font-size: 16px; color: #64748b; max-width: 520px;
-  margin: 0 auto 40px; line-height: 1.7;
-  animation: fadeDown 0.7s ease 0.2s both;
-}
-.quote-card {
-  max-width: 600px; margin: 0 auto 52px;
-  background: rgba(15,23,42,0.70); backdrop-filter: blur(12px);
-  border: 1px solid rgba(99,102,241,0.22); border-left: 4px solid #6366f1;
-  border-radius: 16px; padding: 22px 28px;
-  animation: fadeDown 0.7s ease 0.3s both;
-}
-.quote-text  { font-size: 15px; font-style: italic; color: #e2e8f0; line-height: 1.65; margin-bottom: 10px; }
-.quote-author{ font-size: 12px; color: #6366f1; font-weight: 600; letter-spacing: 0.05em; }
-.img-row {
-  display: flex; justify-content: center; gap: 16px;
-  margin: 0 auto 56px; max-width: 860px; padding: 0 24px;
-  animation: fadeDown 0.7s ease 0.35s both;
-}
-.img-card {
-  flex: 1; min-width: 0; border-radius: 20px; overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.45);
-  position: relative; transition: transform 0.25s;
-}
-.img-card:hover { transform: translateY(-5px); }
-.img-card img  { width: 100%; height: 200px; object-fit: cover; display: block; filter: brightness(0.82) saturate(1.1); }
-.img-overlay   { position: absolute; bottom:0; left:0; right:0; background: linear-gradient(transparent, rgba(2,8,23,0.85)); padding: 20px 16px 14px; }
-.img-label     { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #fff; }
-.img-sub       { font-size: 11px; color: rgba(255,255,255,0.50); margin-top: 2px; }
-.stats-row {
-  display: flex; justify-content: center; gap: 32px;
-  margin: 0 auto 56px; flex-wrap: wrap;
-  animation: fadeDown 0.7s ease 0.4s both;
-}
-.stat-num {
-  font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
-  background: linear-gradient(135deg, #a5b4fc, #34d399);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.stat-label { font-size: 12px; color: #475569; margin-top: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
-.features {
-  display: flex; justify-content: center; gap: 16px;
-  max-width: 860px; margin: 0 auto 56px; padding: 0 24px; flex-wrap: wrap;
-  animation: fadeDown 0.7s ease 0.45s both;
-}
-.feat-card {
-  flex: 1; min-width: 200px;
-  background: rgba(15,23,42,0.65); border: 1px solid rgba(99,102,241,0.18);
-  border-radius: 16px; padding: 20px 18px; backdrop-filter: blur(10px);
-  transition: border-color 0.2s, transform 0.2s;
-}
-.feat-card:hover { border-color: rgba(99,102,241,0.45); transform: translateY(-3px); }
-.feat-icon  { font-size: 24px; margin-bottom: 10px; }
-.feat-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: #e2e8f0; margin-bottom: 6px; }
-.feat-desc  { font-size: 12px; color: #64748b; line-height: 1.6; }
+.lnav { display:flex; align-items:center; padding:20px 48px; border-bottom:1px solid rgba(255,255,255,.06); }
+.lnav-logo { font-family:'Syne',sans-serif; font-size:18px; font-weight:800; background:linear-gradient(135deg,#a5b4fc,#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero { text-align:center; padding:72px 24px 48px; }
+.ctag { display:inline-block; background:rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.30); color:#fcd34d; font-size:13px; font-weight:600; padding:6px 18px; border-radius:999px; margin-bottom:28px; animation:fd .6s ease both; }
+@keyframes fd { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:translateY(0)} }
+.hh1 { font-family:'Syne',sans-serif; font-size:clamp(32px,6vw,60px); font-weight:800; line-height:1.08; margin-bottom:22px; animation:fd .7s ease .1s both; }
+.ll1 { display:block; background:linear-gradient(135deg,#fff 30%,#c7d2fe); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.ll2 { display:block; background:linear-gradient(135deg,#a5b4fc,#34d399 70%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hsub { font-size:16px; color:#64748b; max-width:520px; margin:0 auto 40px; line-height:1.7; animation:fd .7s ease .2s both; }
+.qcard { max-width:600px; margin:0 auto 52px; background:rgba(15,23,42,.70); backdrop-filter:blur(12px); border:1px solid rgba(99,102,241,.22); border-left:4px solid #6366f1; border-radius:16px; padding:22px 28px; animation:fd .7s ease .3s both; }
+.qtxt { font-size:15px; font-style:italic; color:#e2e8f0; line-height:1.65; margin-bottom:10px; }
+.qauth { font-size:12px; color:#6366f1; font-weight:600; letter-spacing:.05em; }
+.imgrow { display:flex; justify-content:center; gap:16px; margin:0 auto 56px; max-width:860px; padding:0 24px; animation:fd .7s ease .35s both; }
+.imgcard { flex:1; min-width:0; border-radius:20px; overflow:hidden; border:1px solid rgba(255,255,255,.08); box-shadow:0 8px 32px rgba(0,0,0,.45); position:relative; transition:transform .25s; }
+.imgcard:hover { transform:translateY(-5px); }
+.imgcard img { width:100%; height:200px; object-fit:cover; display:block; filter:brightness(.82) saturate(1.1); }
+.imgov { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(2,8,23,.85)); padding:20px 16px 14px; }
+.imglbl { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:#fff; }
+.imgsub { font-size:11px; color:rgba(255,255,255,.50); margin-top:2px; }
+.srow { display:flex; justify-content:center; gap:32px; margin:0 auto 56px; flex-wrap:wrap; animation:fd .7s ease .4s both; }
+.snum { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; background:linear-gradient(135deg,#a5b4fc,#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.slbl { font-size:12px; color:#475569; margin-top:4px; letter-spacing:.04em; text-transform:uppercase; }
+.feats { display:flex; justify-content:center; gap:16px; max-width:860px; margin:0 auto 56px; padding:0 24px; flex-wrap:wrap; animation:fd .7s ease .45s both; }
+.fc { flex:1; min-width:200px; background:rgba(15,23,42,.65); border:1px solid rgba(99,102,241,.18); border-radius:16px; padding:20px 18px; backdrop-filter:blur(10px); transition:border-color .2s,transform .2s; }
+.fc:hover { border-color:rgba(99,102,241,.45); transform:translateY(-3px); }
+.fcico { font-size:24px; margin-bottom:10px; }
+.fct { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; color:#e2e8f0; margin-bottom:6px; }
+.fcd { font-size:12px; color:#64748b; line-height:1.6; }
 
-/* ── CTA button ── */
 div[data-testid="stButton"] > button {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
-  color: #fff !important; border: none !important; border-radius: 14px !important;
-  padding: 16px 48px !important; font-family: 'Syne', sans-serif !important;
-  font-size: 16px !important; font-weight: 800 !important; letter-spacing: 0.04em !important;
-  box-shadow: 0 6px 28px rgba(99,102,241,0.45) !important;
-  transition: all 0.2s !important; min-width: 260px !important;
+  background:linear-gradient(135deg,#4f46e5,#7c3aed) !important; color:#fff !important; border:none !important;
+  border-radius:14px !important; padding:14px 40px !important; font-family:'Syne',sans-serif !important;
+  font-size:16px !important; font-weight:800 !important; letter-spacing:.04em !important;
+  box-shadow:0 6px 28px rgba(99,102,241,.45) !important; transition:all .2s !important; min-width:220px !important;
 }
-div[data-testid="stButton"] > button:hover {
-  opacity: 0.88 !important; transform: translateY(-3px) !important;
-  box-shadow: 0 12px 36px rgba(99,102,241,0.55) !important;
-}
+div[data-testid="stButton"] > button:hover { opacity:.88 !important; transform:translateY(-3px) !important; }
 
-/* ────────────────────────────────────
-   APP PAGE  —  CARDS & COMPONENTS
-──────────────────────────────────── */
-.app-header {
-  padding: 32px 48px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  background: rgba(15,23,42,0.50); backdrop-filter: blur(16px);
-  position: sticky; top: 0; z-index: 100;
-}
-.app-logo {
-  font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
-  background: linear-gradient(135deg, #a5b4fc, #34d399);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
+.apphdr { background:linear-gradient(90deg,#4f46e5,#7c3aed,#ec4899); padding:16px 40px; display:flex; align-items:center; box-shadow:0 4px 20px rgba(99,102,241,.30); }
+.applogo { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:#fff; }
 
-/* glass card */
-.g-card {
-  background: rgba(15,23,42,0.65);
-  border: 1px solid rgba(99,102,241,0.20);
-  border-radius: 20px; padding: 28px 32px;
-  backdrop-filter: blur(14px);
-  margin-bottom: 20px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.35);
-}
-.g-card-title {
-  font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800;
-  color: #e2e8f0; margin-bottom: 6px;
-}
-.g-card-sub { font-size: 13px; color: #475569; }
+.pill { display:inline-flex; align-items:center; gap:6px; font-family:'Syne',sans-serif; font-size:11px; font-weight:800; padding:5px 14px; border-radius:999px; margin-bottom:12px; letter-spacing:.06em; text-transform:uppercase; }
+.pi { background:#eef2ff; color:#4f46e5; border:1.5px solid #c7d2fe; }
+.pv { background:#f5f3ff; color:#7c3aed; border:1.5px solid #ddd6fe; }
+.pg { background:#f0fdf4; color:#15803d; border:1.5px solid #bbf7d0; }
+.pr { background:#fff1f2; color:#e11d48; border:1.5px solid #fecdd3; }
+.ps { background:#f0f9ff; color:#0369a1; border:1.5px solid #bae6fd; }
+.pa { background:#fffbeb; color:#b45309; border:1.5px solid #fde68a; }
 
-/* section heading pill */
-.sec-pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.28);
-  color: #a5b4fc; font-size: 12px; font-weight: 700;
-  padding: 5px 16px; border-radius: 999px; letter-spacing: 0.06em;
-  margin-bottom: 16px; text-transform: uppercase;
-}
+.wcard { background:#fff; border-radius:20px; padding:26px 24px; box-shadow:0 4px 24px rgba(99,102,241,.08); border:1.5px solid #e0e7ff; margin-bottom:16px; }
+.wct { font-family:'Syne',sans-serif; font-size:19px; font-weight:800; color:#1e1b4b; margin-bottom:4px; }
+.wcs { font-size:13px; color:#6b7280; }
 
-/* goal item */
-.goal-item {
-  display: flex; align-items: flex-start; gap: 12px;
-  background: rgba(52,211,153,0.07); border: 1px solid rgba(52,211,153,0.20);
-  border-radius: 12px; padding: 12px 16px; margin-bottom: 10px;
-}
-.goal-dot { width: 8px; height: 8px; border-radius: 50%; background: #34d399; margin-top: 5px; flex-shrink: 0; }
-.goal-text { font-size: 14px; color: #e2e8f0; line-height: 1.6; }
+.mt { border-radius:16px; padding:18px 12px; text-align:center; }
+.mi { background:linear-gradient(135deg,#6366f1,#818cf8); }
+.mv { background:linear-gradient(135deg,#8b5cf6,#a78bfa); }
+.ms { background:linear-gradient(135deg,#0ea5e9,#38bdf8); }
+.mg { background:linear-gradient(135deg,#10b981,#34d399); }
+.mr2{ background:linear-gradient(135deg,#f43f5e,#fb7185); }
+.mval { font-family:'Syne',sans-serif; font-size:24px; font-weight:800; color:#fff; }
+.mlbl { font-size:10px; color:rgba(255,255,255,.80); margin-top:3px; text-transform:uppercase; letter-spacing:.06em; }
 
-/* risk item */
-.risk-item {
-  display: flex; align-items: flex-start; gap: 12px;
-  background: rgba(251,113,133,0.08); border: 1px solid rgba(251,113,133,0.22);
-  border-radius: 12px; padding: 12px 16px; margin-bottom: 10px;
-}
-.risk-dot { width: 8px; height: 8px; border-radius: 50%; background: #fb7185; margin-top: 5px; flex-shrink: 0; }
+.sbig { font-family:'Syne',sans-serif; font-size:64px; font-weight:800; background:linear-gradient(135deg,#6366f1,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; }
+.ssub { font-size:12px; color:#9ca3af; margin-top:4px; text-transform:uppercase; letter-spacing:.06em; }
+.brow { display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:5px; }
+.btrk { height:10px; border-radius:999px; background:#f1f5f9; overflow:hidden; margin-bottom:14px; }
+.bfil { height:100%; border-radius:999px; }
 
-/* habit item */
-.habit-item {
-  display: flex; align-items: flex-start; gap: 12px;
-  background: rgba(56,189,248,0.07); border: 1px solid rgba(56,189,248,0.20);
-  border-radius: 12px; padding: 12px 16px; margin-bottom: 10px;
-}
-.habit-dot { width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; margin-top: 5px; flex-shrink: 0; }
+.gc { display:flex; align-items:flex-start; gap:12px; background:linear-gradient(135deg,rgba(99,102,241,.07),rgba(139,92,246,.04)); border:1.5px solid #c7d2fe; border-radius:14px; padding:12px 16px; margin-bottom:10px; }
+.rc { display:flex; align-items:flex-start; gap:12px; background:linear-gradient(135deg,rgba(244,63,94,.07),rgba(251,113,133,.04)); border:1.5px solid #fecdd3; border-radius:14px; padding:12px 16px; margin-bottom:10px; }
+.hc { display:flex; align-items:flex-start; gap:12px; background:linear-gradient(135deg,rgba(14,165,233,.07),rgba(56,189,248,.04)); border:1.5px solid #bae6fd; border-radius:14px; padding:12px 16px; margin-bottom:10px; }
+.sc2{ display:flex; align-items:flex-start; gap:14px; background:linear-gradient(135deg,rgba(16,185,129,.07),rgba(52,211,153,.04)); border:1.5px solid #bbf7d0; border-radius:14px; padding:12px 16px; margin-bottom:10px; }
+.di { width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg,#6366f1,#8b5cf6); margin-top:5px; flex-shrink:0; }
+.dr { width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg,#f43f5e,#fb7185); margin-top:5px; flex-shrink:0; }
+.ds { width:10px; height:10px; border-radius:50%; background:linear-gradient(135deg,#0ea5e9,#38bdf8); margin-top:5px; flex-shrink:0; }
+.sn { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#10b981,#34d399); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#fff; flex-shrink:0; }
+.ct { font-size:14px; color:#1e1b4b; line-height:1.6; }
 
-/* step item */
-.step-item {
-  display: flex; align-items: flex-start; gap: 14px;
-  background: rgba(139,92,246,0.07); border: 1px solid rgba(139,92,246,0.20);
-  border-radius: 12px; padding: 12px 16px; margin-bottom: 10px;
-}
-.step-num {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 800; color: #fff; flex-shrink: 0;
-}
+.wkcard { background:#fff; border-radius:16px; padding:20px 22px; margin-bottom:14px; box-shadow:0 2px 12px rgba(0,0,0,.06); border-left:4px solid #6366f1; }
+.wktit { font-family:'Syne',sans-serif; font-size:15px; font-weight:800; background:linear-gradient(135deg,#6366f1,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:10px; }
+.wkb { font-size:13px; color:#374151; line-height:1.7; margin-bottom:6px; padding-left:12px; border-left:3px solid #c7d2fe; }
 
-/* week card */
-.week-card {
-  background: rgba(15,23,42,0.60); border: 1px solid rgba(99,102,241,0.18);
-  border-radius: 16px; padding: 20px 24px; margin-bottom: 16px;
-}
-.week-title {
-  font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800;
-  margin-bottom: 12px;
-  background: linear-gradient(135deg, #a5b4fc, #34d399);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.week-bullet {
-  display: flex; align-items: flex-start; gap: 10px;
-  font-size: 13px; color: #94a3b8; line-height: 1.6; margin-bottom: 8px;
-}
-.week-bullet::before { content: '▸'; color: #6366f1; flex-shrink: 0; margin-top: 1px; }
+.pjc { display:flex; align-items:center; gap:12px; background:linear-gradient(135deg,#fffbeb,#fff7ed); border:1.5px solid #fde68a; border-radius:12px; padding:12px 16px; margin-bottom:9px; }
+.pjn { font-size:14px; font-weight:700; color:#92400e; }
+.rsc { display:flex; align-items:center; gap:12px; background:linear-gradient(135deg,#f0f9ff,#e0f2fe); border:1.5px solid #bae6fd; border-radius:12px; padding:12px 16px; margin-bottom:9px; }
+.rsn { font-size:14px; color:#075985; font-weight:600; }
 
-/* project card */
-.proj-card {
-  background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.20);
-  border-radius: 14px; padding: 14px 18px; margin-bottom: 10px;
-  display: flex; align-items: center; gap: 12px;
-}
-.proj-icon { font-size: 20px; }
-.proj-name { font-size: 14px; font-weight: 600; color: #fcd34d; }
+.skr { background:#f5f3ff; border:1.5px solid #ddd6fe; border-radius:10px; padding:9px 14px; margin-bottom:7px; font-size:13px; color:#5b21b6; font-weight:600; }
+.skh { background:linear-gradient(135deg,#f0fdf4,#dcfce7); border:1.5px solid #86efac; border-radius:10px; padding:9px 14px; margin-bottom:7px; font-size:13px; color:#15803d; font-weight:700; }
+.skn { background:linear-gradient(135deg,#fff1f2,#ffe4e6); border:1.5px solid #fca5a5; border-radius:10px; padding:9px 14px; margin-bottom:7px; font-size:13px; color:#b91c1c; font-weight:700; }
+.lst { display:flex; align-items:center; gap:12px; background:linear-gradient(135deg,#f5f3ff,#ede9fe); border:1.5px solid #c4b5fd; border-radius:12px; padding:11px 16px; margin-bottom:8px; }
+.ln  { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#6366f1); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#fff; flex-shrink:0; }
+.lt  { font-size:14px; color:#4c1d95; font-weight:600; }
 
-/* resource card */
-.res-card {
-  background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.20);
-  border-radius: 14px; padding: 14px 18px; margin-bottom: 10px;
-  display: flex; align-items: center; gap: 12px;
-}
-.res-icon { font-size: 18px; }
-.res-name  { font-size: 14px; color: #7dd3fc; }
+.ib { background:linear-gradient(135deg,#eef2ff,#f5f3ff); border:1.5px solid #c7d2fe; border-radius:14px; padding:14px 20px; font-size:14px; color:#4338ca; margin-bottom:20px; }
 
-/* readiness score */
-.score-ring-wrap { text-align: center; padding: 20px 0; }
-.score-big {
-  font-family: 'Syne', sans-serif; font-size: 64px; font-weight: 800;
-  background: linear-gradient(135deg, #a5b4fc, #34d399);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  line-height: 1;
-}
-.score-label { font-size: 13px; color: #475569; margin-top: 4px; letter-spacing: 0.08em; text-transform: uppercase; }
+.stTabs [data-baseweb="tab-list"] { background:#fff !important; border-radius:14px !important; padding:4px !important; gap:4px !important; border:1.5px solid #e0e7ff !important; }
+.stTabs [data-baseweb="tab"]      { background:transparent !important; border-radius:10px !important; color:#6b7280 !important; font-weight:600 !important; font-size:13px !important; padding:8px 16px !important; }
+.stTabs [aria-selected="true"]    { background:linear-gradient(135deg,#6366f1,#8b5cf6) !important; color:#fff !important; }
 
-.score-bar-wrap { margin-bottom: 14px; }
-.score-bar-label {
-  display: flex; justify-content: space-between;
-  font-size: 12px; font-weight: 600; margin-bottom: 5px;
-}
-.score-bar-track {
-  height: 8px; border-radius: 999px; background: rgba(255,255,255,0.08);
-  overflow: hidden;
-}
-.score-bar-fill { height: 100%; border-radius: 999px; }
-
-/* metric tiles */
-.metric-tile {
-  background: rgba(15,23,42,0.65); border: 1px solid rgba(99,102,241,0.20);
-  border-radius: 16px; padding: 18px 22px; text-align: center;
-}
-.metric-val {
-  font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
-  background: linear-gradient(135deg, #a5b4fc, #34d399);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.metric-label { font-size: 11px; color: #475569; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
-
-/* skill gap */
-.skill-have {
-  background: rgba(52,211,153,0.10); border: 1px solid rgba(52,211,153,0.30);
-  border-radius: 10px; padding: 10px 16px; margin-bottom: 8px;
-  font-size: 13px; color: #6ee7b7; font-weight: 600;
-  display: flex; align-items: center; gap: 8px;
-}
-.skill-need {
-  background: rgba(251,113,133,0.10); border: 1px solid rgba(251,113,133,0.30);
-  border-radius: 10px; padding: 10px 16px; margin-bottom: 8px;
-  font-size: 13px; color: #fda4af; font-weight: 600;
-  display: flex; align-items: center; gap: 8px;
-}
-.learn-step {
-  display: flex; align-items: center; gap: 12px;
-  background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.22);
-  border-radius: 12px; padding: 12px 16px; margin-bottom: 8px;
-}
-.learn-step-num {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: linear-gradient(135deg, #8b5cf6, #6366f1);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 800; color: #fff; flex-shrink: 0;
-}
-.learn-step-text { font-size: 14px; color: #c4b5fd; }
-
-/* progress bar override */
-.stProgress > div > div > div > div {
-  background: linear-gradient(90deg, #6366f1, #8b5cf6, #34d399) !important;
-  border-radius: 999px !important;
-}
-.stProgress > div > div > div { background: rgba(255,255,255,0.08) !important; border-radius: 999px !important; }
-
-/* input widgets — dark glass */
-.stSelectbox > div, .stSlider, .stTextInput > div {
-  background: transparent !important;
-}
-.stSelectbox div[data-baseweb="select"] > div {
-  background: rgba(15,23,42,0.80) !important;
-  border: 1px solid rgba(99,102,241,0.25) !important;
-  border-radius: 12px !important; color: #e2e8f0 !important;
-}
-.stTextInput > div > div > input {
-  background: rgba(15,23,42,0.80) !important;
-  border: 1px solid rgba(99,102,241,0.25) !important;
-  border-radius: 12px !important; color: #e2e8f0 !important;
-}
-.stNumberInput > div > div > input {
-  background: rgba(15,23,42,0.80) !important;
-  border: 1px solid rgba(99,102,241,0.25) !important;
-  border-radius: 12px !important; color: #e2e8f0 !important;
-}
-
-/* tab styling */
-.stTabs [data-baseweb="tab-list"] {
-  background: rgba(15,23,42,0.60) !important;
-  border-radius: 14px !important; padding: 4px !important;
-  gap: 4px !important; border: 1px solid rgba(99,102,241,0.18) !important;
-}
-.stTabs [data-baseweb="tab"] {
-  background: transparent !important; border-radius: 10px !important;
-  color: #64748b !important; font-weight: 600 !important; font-size: 13px !important;
-  padding: 8px 16px !important;
-}
-.stTabs [aria-selected="true"] {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
-  color: #fff !important; box-shadow: 0 2px 12px rgba(99,102,241,0.40) !important;
-}
-
-/* expander */
-.streamlit-expanderHeader {
-  background: rgba(15,23,42,0.65) !important;
-  border: 1px solid rgba(99,102,241,0.20) !important;
-  border-radius: 12px !important; color: #e2e8f0 !important; font-weight: 600 !important;
-}
-
-/* download button */
-.stDownloadButton > button {
-  background: linear-gradient(135deg, #059669, #34d399) !important;
-  color: #fff !important; border: none !important; border-radius: 12px !important;
-  font-weight: 700 !important; letter-spacing: 0.04em !important;
-  box-shadow: 0 4px 18px rgba(52,211,153,0.35) !important;
-}
-
-/* labels */
-.stSelectbox label, .stSlider label, .stTextInput label, .stNumberInput label, .stMultiSelect label {
-  color: #94a3b8 !important; font-size: 13px !important; font-weight: 600 !important;
-}
+.stDownloadButton > button { background:linear-gradient(135deg,#10b981,#34d399) !important; color:#fff !important; border:none !important; border-radius:12px !important; font-weight:700 !important; }
+.stSelectbox div[data-baseweb="select"] > div { background:#fff !important; border:1.5px solid #c7d2fe !important; border-radius:10px !important; color:#1e1b4b !important; }
+.stTextInput > div > div > input  { background:#fff !important; border:1.5px solid #c7d2fe !important; border-radius:10px !important; color:#1e1b4b !important; }
+.stNumberInput > div > div > input{ background:#fff !important; border:1.5px solid #c7d2fe !important; border-radius:10px !important; color:#1e1b4b !important; }
+.stMultiSelect div[data-baseweb="select"] > div { background:#fff !important; border:1.5px solid #c7d2fe !important; border-radius:10px !important; }
+.stSelectbox label,.stSlider label,.stTextInput label,.stNumberInput label,.stMultiSelect label { color:#374151 !important; font-size:13px !important; font-weight:600 !important; }
+.stProgress > div > div > div > div { background:linear-gradient(90deg,#6366f1,#8b5cf6,#ec4899) !important; border-radius:999px !important; }
+.stProgress > div > div > div       { background:#f1f5f9 !important; border-radius:999px !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────
-# SESSION STATE
-# ─────────────────────────────────────────────
-if "page" not in st.session_state:
-    st.session_state.page = "home"
-if "roadmap_data" not in st.session_state:
-    st.session_state.roadmap_data = None
-if "student_info" not in st.session_state:
-    st.session_state.student_info = None
-if "student_name" not in st.session_state:
-    st.session_state.student_name = ""
+for k,v in [("page","home"),("roadmap_data",None),("student_info",None),("student_name","")]:
+    if k not in st.session_state:
+        st.session_state[k] = v
 
-# ─────────────────────────────────────────────
-# LANDING PAGE
-# ─────────────────────────────────────────────
-def show_landing_page():
+def clean(x):
+    if x is None: return ""
+    try:
+        if pd.isna(x): return ""
+    except Exception: pass
+    s = str(x).strip()
+    return "" if s.lower() in ("nan","none","null","") else s
+
+def show_landing():
     QUOTES = [
-        ("\"The secret of getting ahead is getting started.\"", "— Mark Twain"),
-        ("\"Don't watch the clock; do what it does. Keep going.\"", "— Sam Levenson"),
-        ("\"You don't have to be great to start, but you have to start to be great.\"", "— Zig Ziglar"),
-        ("\"Push yourself, because no one else is going to do it for you.\"", "— Anonymous"),
-        ("\"Dream big. Start small. Act now.\"", "— Robin Sharma"),
-        ("\"Your future is created by what you do today, not tomorrow.\"", "— Robert Kiyosaki"),
-        ("\"Success is the sum of small efforts repeated day in and day out.\"", "— Robert Collier"),
-        ("\"Believe you can and you're halfway there.\"", "— Theodore Roosevelt"),
+        ("The secret of getting ahead is getting started.", "Mark Twain"),
+        ("Do not watch the clock. Keep going.", "Sam Levenson"),
+        ("You do not have to be great to start, but you have to start to be great.", "Zig Ziglar"),
+        ("Push yourself, because no one else will do it for you.", "Anonymous"),
+        ("Dream big. Start small. Act now.", "Robin Sharma"),
+        ("Success is the sum of small efforts repeated day in and day out.", "Robert Collier"),
+        ("Believe you can and you are halfway there.", "Theodore Roosevelt"),
     ]
-    quote_text, quote_author = random.choice(QUOTES)
-    STUDENT_IMAGES = [
+    qt, qa = random.choice(QUOTES)
+    IMGS = [
         "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&q=80",
         "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&q=80",
         "https://images.unsplash.com/photo-1529390079861-591de354faf5?w=400&q=80",
     ]
     st.markdown(f"""
     <div class="landing">
-      <div class="nav">
-        <div class="nav-logo">🎯  Personalized SkillRoadmap</div>
-      </div>
+      <div class="lnav"><div class="lnav-logo">🎯 SkillRoadmap</div></div>
       <div class="hero">
-        <div class="confused-tag">😕 &nbsp; Not sure where to start?</div>
-        <h1 class="hero-h1">
-          <span class="line1">Stop feeling lost.</span>
-          <span class="line2">Build your roadmap today.</span>
-        </h1>
-        <p class="hero-sub">
-          Answer a few simple questions about yourself — we'll generate a
-          personalised 4-week learning plan with projects, resources, and a
-          readiness score. Made for engineering students like you.
-        </p>
-        <div class="quote-card">
-          <div class="quote-text">{quote_text}</div>
-          <div class="quote-author">{quote_author}</div>
-        </div>
+        <div class="ctag">😕 &nbsp; Not sure where to start?</div>
+        <h1 class="hh1"><span class="ll1">Stop feeling lost.</span><span class="ll2">Build your roadmap today.</span></h1>
+        <p class="hsub">Answer a few simple questions — we generate a personalised 4-week learning plan with projects, resources, and a readiness score. Made for engineering students.</p>
+        <div class="qcard"><div class="qtxt">{qt}</div><div class="qauth">— {qa}</div></div>
       </div>
-      <div class="img-row">
-        <div class="img-card">
-          <img src="{STUDENT_IMAGES[0]}" alt="Students studying"/>
-          <div class="img-overlay"><div class="img-label">Collaborate &amp; Grow</div><div class="img-sub">Learn with peers</div></div>
-        </div>
-        <div class="img-card">
-          <img src="{STUDENT_IMAGES[1]}" alt="Group project"/>
-          <div class="img-overlay"><div class="img-label">Build Real Projects</div><div class="img-sub">Portfolio-grade work</div></div>
-        </div>
-        <div class="img-card">
-          <img src="{STUDENT_IMAGES[2]}" alt="Student laptop"/>
-          <div class="img-overlay"><div class="img-label">Learn at Your Pace</div><div class="img-sub">Structured &amp; clear</div></div>
-        </div>
+      <div class="imgrow">
+        <div class="imgcard"><img src="{IMGS[0]}" alt="s"/><div class="imgov"><div class="imglbl">Collaborate &amp; Grow</div><div class="imgsub">Learn with peers</div></div></div>
+        <div class="imgcard"><img src="{IMGS[1]}" alt="g"/><div class="imgov"><div class="imglbl">Build Real Projects</div><div class="imgsub">Portfolio-grade work</div></div></div>
+        <div class="imgcard"><img src="{IMGS[2]}" alt="l"/><div class="imgov"><div class="imglbl">Learn at Your Pace</div><div class="imgsub">Structured &amp; clear</div></div></div>
       </div>
-      <div class="stats-row">
-        <div class="stat-item"><div class="stat-num">14+</div><div class="stat-label">Learning Tracks</div></div>
-        <div class="stat-item"><div class="stat-num">4</div><div class="stat-label">Week Plan</div></div>
-        <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Free Resources</div></div>
-        <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Personalised</div></div>
+      <div class="srow">
+        <div><div class="snum">14+</div><div class="slbl">Learning Tracks</div></div>
+        <div><div class="snum">4</div><div class="slbl">Week Plan</div></div>
+        <div><div class="snum">50+</div><div class="slbl">Free Resources</div></div>
+        <div><div class="snum">100%</div><div class="slbl">Personalised</div></div>
       </div>
-      <div class="features">
-        <div class="feat-card"><div class="feat-icon">📊</div><div class="feat-title">Readiness Score</div><div class="feat-desc">Get a breakdown of your academics, skills, routine, and communication.</div></div>
-        <div class="feat-card"><div class="feat-icon">🗓️</div><div class="feat-title">4-Week Plan</div><div class="feat-desc">A clear week-by-week learning roadmap tailored to your interest and level.</div></div>
-        <div class="feat-card"><div class="feat-icon">🧩</div><div class="feat-title">Skill Gap Analysis</div><div class="feat-desc">Pick a job role and instantly see what skills you have and what to learn next.</div></div>
-        <div class="feat-card"><div class="feat-icon">⬇️</div><div class="feat-title">Download Roadmap</div><div class="feat-desc">Save your full roadmap as a Markdown file to keep and revisit anytime.</div></div>
+      <div class="feats">
+        <div class="fc"><div class="fcico">📊</div><div class="fct">Readiness Score</div><div class="fcd">Breakdown of academics, skills, routine, and communication.</div></div>
+        <div class="fc"><div class="fcico">🗓️</div><div class="fct">4-Week Plan</div><div class="fcd">A clear week-by-week roadmap tailored to your interest and level.</div></div>
+        <div class="fc"><div class="fcico">🧩</div><div class="fct">Skill Gap Analysis</div><div class="fcd">Pick a job role and see what skills you have and what to learn next.</div></div>
+        <div class="fc"><div class="fcico">⬇️</div><div class="fct">Download Roadmap</div><div class="fcd">Save your full roadmap as a Markdown file to revisit anytime.</div></div>
       </div>
     </div>
     """, unsafe_allow_html=True)
-
-    col1, col2, col3 = st.columns([1, 1.4, 1])
-    with col2:
+    c1,c2,c3 = st.columns([1,1.4,1])
+    with c2:
         if st.button("🚀  Start My Roadmap", use_container_width=True):
             st.session_state.page = "app"
             st.rerun()
-    st.markdown('<p style="text-align:center;color:#334155;font-size:12px;margin-top:8px">Takes less than 2 minutes · No signup needed</p>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align:center;color:#334155;font-size:12px;margin-top:8px">Takes less than 2 minutes - No signup needed</p>', unsafe_allow_html=True)
 
-
-# ─────────────────────────────────────────────
-# COURSE DATABASE
-# ─────────────────────────────────────────────
 COURSE_DB = {
-    "ML": {
-        "courses": ["Andrew Ng — Machine Learning Specialization (Coursera)", "Krish Naik — Machine Learning Playlist (YouTube)", "fast.ai — Practical Deep Learning for Coders"],
-        "weeks": ["Python + Numpy/Pandas + basics of ML (Regression, metrics).", "Scikit-learn: Decision Trees, Random Forest, model validation.", "Feature engineering + classification + overfitting control.", "Project: Build an end-to-end ML app and deploy via Streamlit."],
-        "projects": ["House Price Predictor", "Student Performance Dashboard + Prediction", "Customer Segmentation (K-Means)"],
-    },
-    "WEB": {
-        "courses": ["The Odin Project (Full Stack foundations)", "FreeCodeCamp — Responsive Web Design", "JavaScript/React Crash Course (YouTube)"],
-        "weeks": ["HTML + CSS (Flex/Grid) + build 1 landing page.", "JavaScript (DOM, ES6, Fetch API) + small interactive UI.", "React basics (components, state, props) + mini app.", "Project: Deploy a portfolio-grade site/app (GitHub Pages/Vercel)."],
-        "projects": ["Portfolio Website (Dark mode + sections)", "To-do App (LocalStorage)", "Mini E-commerce Product Gallery UI"],
-    },
-    "DSA": {
-        "courses": ["Striver A2Z DSA Sheet (TakeUForward)", "NeetCode 150 (structured problems)", "Abdul Bari — Algorithms (YouTube)"],
-        "weeks": ["Arrays/Strings + time complexity + 20 problems.", "Linked List + Stack/Queue + 15 problems.", "Trees + Recursion/Backtracking + 12 problems.", "Sorting/Searching + DP basics + mock interview set."],
-        "projects": ["Sorting Visualizer", "Sudoku Solver", "Pathfinding Visualizer (BFS/Dijkstra)"],
-    },
-    "CYBER": {
-        "courses": ["TryHackMe — Pre Security / Beginner Path", "OverTheWire (Bandit) — Linux basics practice", "YouTube: Networking + Web security basics (OWASP Top 10)"],
-        "weeks": ["Linux + networking basics + command line practice.", "Web fundamentals + OWASP Top 10 (SQLi, XSS, auth issues).", "Hands-on labs (TryHackMe rooms) + write notes.", "Project: Security checklist + demo report (mini pentest style)."],
-        "projects": ["Basic Web Security Audit Report (OWASP checklist)", "Password strength checker + hashing demo", "Phishing awareness mini-site (educational)"],
-    },
-    "ECE": {
-        "courses": ["NPTEL — Digital Circuits / Microprocessors (choose 1)", "Embedded Systems (Arduino/ESP32) playlist (YouTube)", "VLSI Basics / Communication Systems intro (NPTEL/YouTube)"],
-        "weeks": ["Core: C basics + digital logic fundamentals (gates, flip-flops).", "Embedded basics: Arduino/ESP32 + sensors (read data, print/plot).", "Choose one: VLSI basics OR Communication Systems basics.", "Project: Mini IoT/Embedded demo + documentation + results."],
-        "projects": ["IoT Temperature/Humidity Monitor (sensor + dashboard)", "Arduino Sensor Data Logger", "Mini Communication System simulation report (basic)"],
-    },
-    "COMM_SYSTEMS": {
-        "courses": ["NPTEL — Communication Systems", "Signals & Systems basics (YouTube/NPTEL)", "MATLAB/Python signal processing basics (tutorial series)"],
-        "weeks": ["Signals basics: sampling, frequency, noise concept.", "AM/FM basics + modulation/demodulation understanding.", "Digital comm intro: ASK/FSK/PSK concept + simple plots.", "Project: small simulation notebook + report (plots + explanation)."],
-        "projects": ["AM/FM simulation notebook", "Noise impact on signal plots", "Digital modulation demo (basic)"],
-    },
-    "VLSI": {
-        "courses": ["NPTEL — VLSI Design", "Digital Electronics (NPTEL/YouTube)", "Verilog basics playlist (YouTube)"],
-        "weeks": ["Digital design recap + number systems + logic optimization.", "Verilog basics: modules, testbench, simulation flow.", "Combinational + sequential circuits in Verilog.", "Project: design a small digital system + simulate + report."],
-        "projects": ["4-bit ALU in Verilog", "Traffic Light Controller (FSM) in Verilog", "Simple Counter/Shift Register designs"],
-    },
-    "SIGNAL": {
-        "courses": ["NPTEL — Signals and Systems / DSP intro", "Python for Signal Processing (NumPy/Scipy) tutorials", "YouTube: DSP basics (filters, FFT)"],
-        "weeks": ["Signals basics + plotting + basic transforms concept.", "FFT basics + noise removal concept.", "Filters (low/high pass) concept + simple implementations.", "Project: signal cleaning / analysis notebook + report."],
-        "projects": ["Noise filtering demo (FFT + filter)", "Audio signal analysis notebook", "Sensor signal smoothing + plots"],
-    },
-    "IOT": {
-        "courses": ["Arduino/ESP32 IoT playlist (YouTube)", "NPTEL — Introduction to IoT", "Basics of MQTT/HTTP + simple dashboards"],
-        "weeks": ["Microcontroller + sensor basics + read values.", "Send data: serial/log file + basic visualization.", "Add connectivity (Wi-Fi/MQTT/HTTP) basic.", "Project: IoT dashboard demo + short video + README."],
-        "projects": ["Smart home sensor dashboard", "Weather station mini project", "Room monitoring (temp/light) demo"],
-    },
-    "EMBEDDED": {
-        "courses": ["Embedded C basics (YouTube)", "Arduino/ESP32 practical series", "Basics of interrupts/timers (tutorial series)"],
-        "weeks": ["Embedded C: loops, pointers basics, debugging mindset.", "GPIO + sensor interfacing + basic timing.", "Interrupts/timers basics + simple control logic.", "Project: embedded mini demo + documentation."],
-        "projects": ["Digital stopwatch timer", "Sensor-based alert system", "LED patterns with interrupts/timers"],
-    },
-    "EEE": {
-        "courses": ["NPTEL — Power Systems", "NPTEL — Electrical Machines", "Industrial Automation basics (YouTube/NPTEL)"],
-        "weeks": ["Basics: power system components + machines recap.", "Protection & control basics + simple problem practice.", "Renewable/Smart grid basics (choose 1 focus).", "Project: mini case-study/report with calculations + charts."],
-        "projects": ["Load analysis mini report (Excel/Python)", "Renewable energy comparison case study", "Basic fault analysis notes + examples"],
-    },
-    "POWER": {
-        "courses": ["NPTEL — Power Systems (core)", "Protection & Switchgear basics (YouTube/NPTEL)", "Power flow intro (basic concepts)"],
-        "weeks": ["Power system overview + per-unit basics (light).", "Protection basics (relays, faults) + examples.", "Transmission/distribution concepts + reliability.", "Project: load/fault calculation sheet + report."],
-        "projects": ["Fault calculation worksheet + explanation", "Load estimation report for hostel/house", "Transmission line parameter mini notebook"],
-    },
-    "RENEW": {
-        "courses": ["NPTEL — Renewable Energy", "Solar PV basics (YouTube/NPTEL)", "Wind energy basics (tutorial series)"],
-        "weeks": ["Solar PV basics + components + sizing idea.", "Wind/other renewables basics + pros/cons.", "Hybrid systems + storage basics (battery).", "Project: solar sizing calculator + mini report."],
-        "projects": ["Solar sizing calculator (Excel/Python)", "Renewable comparison infographic/report", "Microgrid case study summary"],
-    },
-    "SMARTGRID": {
-        "courses": ["Smart Grid basics (NPTEL/YouTube)", "Power electronics intro (for grid integration)", "SCADA basics overview (intro)"],
-        "weeks": ["Smart grid concept + components + communication basics.", "Demand response + metering + grid monitoring concepts.", "Grid integration of renewables + challenges.", "Project: smart grid concept report + diagram + demo slides."],
-        "projects": ["Smart grid architecture diagram + report", "Demand response mini case study", "Energy monitoring dashboard concept"],
-    },
-    "AUTOMATION": {
-        "courses": ["Industrial Automation basics (YouTube/NPTEL)", "PLC fundamentals (intro course)", "Sensors + actuators basics"],
-        "weeks": ["Automation basics + sensors/actuators overview.", "PLC fundamentals (ladder logic concept).", "Control basics: feedback, stability concept.", "Project: automation workflow diagram + mini case study."],
-        "projects": ["PLC ladder logic mini examples (documented)", "Sensor-actuator workflow demo (simulation/report)", "Industry process automation case study"],
-    },
-    "ELECTRICAL_DESIGN": {
-        "courses": ["Electrical Design basics (YouTube/notes)", "AutoCAD Electrical basics (optional)", "Basics of wiring, safety, standards (overview)"],
-        "weeks": ["Wiring basics + safety + common components.", "Reading single-line diagrams (SLD) basics.", "Load calculation + protection selection basics.", "Project: Create an SLD + load sheet + report."],
-        "projects": ["Single-line diagram + explanation", "Load calculation sheet for a building", "Protection device selection notes"],
-    },
-    "MECH": {
-        "courses": ["CAD basics (Fusion 360/SolidWorks tutorials)", "NPTEL — Manufacturing / Thermal Engineering (choose 1)", "Robotics basics (intro course/playlist)"],
-        "weeks": ["CAD basics: sketches + 3 simple parts.", "Manufacturing basics OR Thermal basics (choose one).", "Robotics basics + mechanisms overview.", "Project: design + report (CAD model + documentation)."],
-        "projects": ["CAD assembly mini project", "Manufacturing process comparison report", "Thermal analysis mini notes + examples"],
-    },
-    "CAD": {
-        "courses": ["Fusion 360 / SolidWorks beginner tutorials", "Engineering drawing basics (YouTube)", "Basic GD&T overview (optional)"],
-        "weeks": ["Sketching + constraints + 3 practice parts.", "3D modeling + assembly basics.", "Drawings + dimensions + tolerances basics.", "Project: model + drawing pack + short explanation."],
-        "projects": ["CAD model of simple machine part", "Assembly of basic mechanism", "Drawing sheet pack (PDF) + notes"],
-    },
-    "ROBOTICS": {
-        "courses": ["Robotics basics playlist (YouTube)", "Arduino basics (for small robotics demos)", "Mechanisms + control intro (overview)"],
-        "weeks": ["Basics: sensors + motors overview + simple control idea.", "Arduino motor control basics + small demo.", "Robot mechanisms + path planning intro (basic).", "Project: mini robot demo plan + documentation/video."],
-        "projects": ["Line follower robot plan/demo", "Obstacle avoidance mini demo", "Robot arm concept + CAD (optional)"],
-    },
-    "AUTO": {
-        "courses": ["Automobile basics (YouTube/NPTEL)", "Engine + transmission basics overview", "Vehicle dynamics intro (basic)"],
-        "weeks": ["Vehicle components + engine basics.", "Transmission + braking + steering basics.", "Vehicle dynamics intro + safety concepts.", "Project: vehicle subsystem report + diagrams."],
-        "projects": ["Vehicle subsystem case study (brakes/engine)", "Maintenance checklist + explanation", "Auto trends summary report"],
-    },
-    "THERMAL": {
-        "courses": ["NPTEL — Thermal Engineering basics", "Heat transfer intro playlist (YouTube)", "Basic thermodynamics notes + problems"],
-        "weeks": ["Thermo basics: laws + properties + simple problems.", "Heat transfer basics (conduction/convection/radiation).", "Cycles overview (Rankine/Brayton) basic.", "Project: mini thermal calculation sheet + report."],
-        "projects": ["Heat loss calculation mini sheet", "Thermal cycle summary report", "Cooling system concept notes"],
-    },
-    "MANUFACTURING": {
-        "courses": ["NPTEL — Manufacturing Processes", "Metrology basics (YouTube/NPTEL)", "Lean manufacturing overview (intro)"],
-        "weeks": ["Manufacturing basics: casting/forming/machining overview.", "Metrology basics + quality concepts.", "Lean basics (5S, waste reduction).", "Project: process comparison + case study report."],
-        "projects": ["Manufacturing process comparison report", "Lean 5S checklist for workshop", "Quality control mini notes + examples"],
-    },
-    "SOFT": {
-        "courses": ["Basic Communication Skills playlist (YouTube)", "TED Talks (practice + notes)", "Resume & Interview basics resources"],
-        "weeks": ["Daily speaking practice + 5–7 lines writing summary.", "Improve vocabulary + clarity + small presentations.", "Mock interview practice + feedback from peers.", "Project: 2-min self intro video + updated resume."],
-        "projects": ["2-min self-introduction video", "Resume + LinkedIn update checklist", "Weekly speaking practice log"],
-    },
+    "ML":{"courses":["Andrew Ng - ML Specialization (Coursera)","Krish Naik - ML Playlist (YouTube)","fast.ai - Practical Deep Learning"],"weeks":["Python + Numpy/Pandas + ML basics.","Scikit-learn: Decision Trees, Random Forest, validation.","Feature engineering + classification + overfitting.","Project: End-to-end ML app deployed on Streamlit."],"projects":["House Price Predictor","Student Performance Dashboard","Customer Segmentation K-Means"]},
+    "WEB":{"courses":["The Odin Project Full Stack","FreeCodeCamp Responsive Web Design","JavaScript React Crash Course YouTube"],"weeks":["HTML + CSS Flex/Grid + build 1 landing page.","JavaScript DOM ES6 Fetch + interactive UI.","React basics components state props + mini app.","Project: Portfolio site on GitHub Pages or Vercel."],"projects":["Portfolio Website","To-do App LocalStorage","Mini E-commerce Product Gallery"]},
+    "DSA":{"courses":["Striver A2Z DSA Sheet TakeUForward","NeetCode 150 structured problems","Abdul Bari Algorithms YouTube"],"weeks":["Arrays/Strings + time complexity + 20 problems.","Linked List + Stack/Queue + 15 problems.","Trees + Recursion + 12 problems.","Sorting/Searching + DP basics + mock interview."],"projects":["Sorting Visualizer","Sudoku Solver","Pathfinding Visualizer BFS Dijkstra"]},
+    "CYBER":{"courses":["TryHackMe Pre Security Path","OverTheWire Bandit Linux basics","Networking and Web security OWASP Top 10"],"weeks":["Linux + networking + command line practice.","Web fundamentals + OWASP Top 10 SQLi XSS.","Hands-on TryHackMe labs.","Project: Security checklist + mini pentest report."],"projects":["Web Security Audit Report OWASP","Password strength checker demo","Phishing awareness mini-site"]},
+    "ECE":{"courses":["NPTEL Digital Circuits Microprocessors","Embedded Systems Arduino ESP32 playlist","VLSI Basics Communication Systems NPTEL"],"weeks":["C basics + digital logic gates flip-flops.","Arduino ESP32 + sensors read and plot.","VLSI basics OR Communication Systems.","Project: Mini IoT Embedded demo + docs."],"projects":["IoT Temperature Humidity Monitor","Arduino Sensor Data Logger","Communication System simulation report"]},
+    "VLSI":{"courses":["NPTEL VLSI Design","Digital Electronics NPTEL YouTube","Verilog basics playlist YouTube"],"weeks":["Digital design + number systems + logic.","Verilog modules testbench simulation.","Combinational and sequential circuits.","Project: Small digital system simulate report."],"projects":["4-bit ALU in Verilog","Traffic Light Controller FSM","Counter Shift Register designs"]},
+    "IOT":{"courses":["Arduino ESP32 IoT playlist YouTube","NPTEL Introduction to IoT","MQTT HTTP basics simple dashboards"],"weeks":["Microcontroller + sensor basics + read values.","Send data serial log + basic visualization.","Add connectivity WiFi MQTT HTTP.","Project: IoT dashboard demo README."],"projects":["Smart home sensor dashboard","Weather station mini project","Room monitoring temp light demo"]},
+    "EMBEDDED":{"courses":["Embedded C basics YouTube","Arduino ESP32 practical series","Interrupts timers tutorial series"],"weeks":["Embedded C loops pointers debugging.","GPIO + sensor interfacing + timing.","Interrupts timers + simple control logic.","Project: Embedded mini demo + docs."],"projects":["Digital stopwatch timer","Sensor-based alert system","LED patterns with interrupts"]},
+    "SIGNAL":{"courses":["NPTEL Signals and Systems DSP","Python Signal Processing NumPy Scipy","YouTube DSP basics filters FFT"],"weeks":["Signals basics plotting transforms.","FFT basics + noise removal.","Filters low high pass + implementations.","Project: Signal cleaning notebook report."],"projects":["Noise filtering demo FFT","Audio signal analysis notebook","Sensor signal smoothing plots"]},
+    "COMM_SYSTEMS":{"courses":["NPTEL Communication Systems","Signals and Systems YouTube NPTEL","MATLAB Python signal processing basics"],"weeks":["Signals sampling frequency noise.","AM FM modulation demodulation.","Digital comm ASK FSK PSK plots.","Project: Simulation notebook report."],"projects":["AM FM simulation notebook","Noise impact on signal plots","Digital modulation demo"]},
+    "POWER":{"courses":["NPTEL Power Systems","Protection and Switchgear YouTube NPTEL","Power flow intro basic concepts"],"weeks":["Power system overview per-unit basics.","Protection relays faults examples.","Transmission distribution reliability.","Project: Load fault calculation sheet."],"projects":["Fault calculation worksheet","Load estimation report","Transmission line parameter notebook"]},
+    "RENEW":{"courses":["NPTEL Renewable Energy","Solar PV basics YouTube NPTEL","Wind energy basics"],"weeks":["Solar PV + components + sizing.","Wind renewables pros cons.","Hybrid systems battery storage.","Project: Solar sizing calculator report."],"projects":["Solar sizing calculator Python","Renewable comparison report","Microgrid case study summary"]},
+    "SMARTGRID":{"courses":["Smart Grid basics NPTEL YouTube","Power electronics intro","SCADA basics intro"],"weeks":["Smart grid concept components.","Demand response metering monitoring.","Grid integration of renewables.","Project: Smart grid report diagram."],"projects":["Smart grid architecture diagram","Demand response case study","Energy monitoring dashboard concept"]},
+    "AUTOMATION":{"courses":["Industrial Automation YouTube NPTEL","PLC fundamentals intro course","Sensors actuators basics"],"weeks":["Automation basics sensors actuators.","PLC fundamentals ladder logic.","Control basics feedback stability.","Project: Automation workflow case study."],"projects":["PLC ladder logic examples","Sensor-actuator workflow demo","Industry automation case study"]},
+    "ELECTRICAL_DESIGN":{"courses":["Electrical Design basics YouTube","AutoCAD Electrical basics optional","Wiring safety standards overview"],"weeks":["Wiring basics safety components.","Reading single-line diagrams SLD.","Load calculation protection selection.","Project: SLD load sheet report."],"projects":["Single-line diagram explanation","Load calculation sheet","Protection device selection notes"]},
+    "ROBOTICS":{"courses":["Robotics basics playlist YouTube","Arduino basics robotics demos","Mechanisms and control intro"],"weeks":["Sensors motors simple control.","Arduino motor control small demo.","Robot mechanisms path planning.","Project: Mini robot demo documentation."],"projects":["Line follower robot demo","Obstacle avoidance mini demo","Robot arm concept CAD"]},
+    "CAD":{"courses":["Fusion 360 SolidWorks tutorials","Engineering drawing basics YouTube","GD and T overview optional"],"weeks":["Sketching constraints 3 parts.","3D modeling assembly basics.","Drawings dimensions tolerances.","Project: Model drawing pack."],"projects":["CAD model of machine part","Assembly of basic mechanism","Drawing sheet pack notes"]},
+    "AUTO":{"courses":["Automobile basics YouTube NPTEL","Engine transmission overview","Vehicle dynamics intro"],"weeks":["Vehicle components engine basics.","Transmission braking steering.","Vehicle dynamics safety.","Project: Vehicle subsystem report."],"projects":["Vehicle subsystem case study","Maintenance checklist","Auto trends summary report"]},
+    "THERMAL":{"courses":["NPTEL Thermal Engineering","Heat transfer intro YouTube","Thermodynamics notes problems"],"weeks":["Thermo laws properties problems.","Heat transfer conduction convection radiation.","Cycles Rankine Brayton overview.","Project: Thermal calculation sheet report."],"projects":["Heat loss calculation mini sheet","Thermal cycle summary report","Cooling system concept notes"]},
+    "MANUFACTURING":{"courses":["NPTEL Manufacturing Processes","Metrology basics YouTube NPTEL","Lean manufacturing overview"],"weeks":["Manufacturing casting forming machining.","Metrology quality concepts.","Lean basics 5S waste reduction.","Project: Process comparison report."],"projects":["Manufacturing process comparison report","Lean 5S checklist for workshop","Quality control mini notes"]},
+    "SOFT":{"courses":["Communication Skills playlist YouTube","TED Talks practice notes","Resume and Interview basics"],"weeks":["Daily speaking practice 5-7 lines writing.","Vocabulary clarity small presentations.","Mock interview peer feedback.","Project: 2-min intro video updated resume."],"projects":["2-min self-introduction video","Resume LinkedIn update checklist","Weekly speaking practice log"]},
 }
 
-JOB_SKILL_ANALYSIS = {
-    "Software Developer":     {"skills": ["Python / Java", "Data Structures & Algorithms", "HTML, CSS, JavaScript", "Git & GitHub", "Databases (SQL)", "OOPS", "Problem Solving"], "projects": ["Student Management System", "Task Tracker Application", "Portfolio Website", "REST API Mini Project"], "resources": ["NPTEL – Programming & DSA", "YouTube – freeCodeCamp", "GeeksForGeeks – DSA", "GitHub – Open Source Projects"]},
-    "Frontend Developer":     {"skills": ["HTML", "CSS", "JavaScript", "React", "Responsive Design", "Git & GitHub"], "projects": ["Portfolio Website", "React To-Do App", "UI Clone (Netflix / Amazon)"], "resources": ["MDN Web Docs", "Traversy Media (YouTube)", "React Official Docs"]},
-    "Backend Developer":      {"skills": ["Node.js / Python / Java", "Databases (SQL/NoSQL)", "APIs / RESTful Services", "Git & GitHub", "Authentication & Security"], "projects": ["REST API Project", "E-commerce Backend", "Blog Platform Backend"], "resources": ["Udemy Backend Courses", "YouTube – Tech With Tim / Traversy Media", "MongoDB University"]},
-    "Data Scientist":         {"skills": ["Python", "Statistics", "Pandas & NumPy", "Data Visualization", "Machine Learning Basics"], "projects": ["Student Performance Analysis", "Sales Prediction Model", "EDA Project"], "resources": ["Kaggle Learn", "Krish Naik (YouTube)", "Coursera ML (Audit Mode)"]},
-    "Machine Learning Engineer": {"skills": ["Python", "Linear Algebra & Statistics", "Scikit-learn / TensorFlow / PyTorch", "Data Preprocessing", "Model Deployment"], "projects": ["Predictive Analytics Model", "Image Classification Project", "Recommendation System"], "resources": ["Fast.ai Courses", "DeepLearning.ai (Coursera)", "YouTube – Sentdex / Krish Naik"]},
-    "DevOps Engineer":        {"skills": ["Linux / Shell Scripting", "CI/CD (Jenkins/GitHub Actions)", "Docker / Kubernetes", "Cloud Platforms (AWS / GCP / Azure)", "Monitoring & Logging"], "projects": ["CI/CD Pipeline Setup", "Dockerized Application Deployment", "Cloud Infrastructure Project"], "resources": ["Linux Academy / A Cloud Guru", "YouTube – TechWorld with Nana", "Official Docker & Kubernetes Docs"]},
-    "UI/UX Designer":         {"skills": ["Figma / Adobe XD", "Wireframing & Prototyping", "User Research & Testing", "Responsive Design Principles", "Portfolio Creation"], "projects": ["Mobile App Wireframes", "Website Redesign Project", "Interactive Prototype"], "resources": ["Figma Learn Tutorials", "Coursera UI/UX Courses", "YouTube – DesignCourse / CharliMarieTV"]},
-    "Cybersecurity Analyst":  {"skills": ["Networking Basics", "Linux & Windows Security", "Penetration Testing", "Firewalls & IDS/IPS", "Security Tools (Wireshark, Nmap)"], "projects": ["Vulnerability Assessment", "Phishing Simulation", "Secure Web Application Setup"], "resources": ["TryHackMe / Hack The Box", "Cybrary Courses", "YouTube – NetworkChuck / The Cyber Mentor"]},
-    "Mobile App Developer":   {"skills": ["Java / Kotlin / Swift / Flutter", "UI/UX for Mobile", "APIs & Backend Integration", "App Deployment (Play Store / App Store)", "Debugging & Testing"], "projects": ["Todo App", "Weather Forecast App", "E-commerce Mobile App"], "resources": ["Udemy Mobile App Courses", "YouTube – CodeWithChris / The Net Ninja", "Official Flutter Docs"]},
-    "Cloud Engineer":         {"skills": ["AWS / Azure / GCP", "Cloud Architecture & Design", "Networking & Security", "CI/CD Pipelines", "Infrastructure as Code (Terraform)"], "projects": ["Deploy Web App on Cloud", "Serverless Application Project", "Cloud Monitoring Setup"], "resources": ["AWS / Azure / GCP Official Docs", "A Cloud Guru Courses", "YouTube – TechWorld with Nana"]},
-    "Business Analyst":       {"skills": ["Excel / SQL / Tableau / PowerBI", "Requirement Gathering", "Process Modeling", "Data Analysis & Reporting", "Communication & Presentation"], "projects": ["Sales Dashboard", "Customer Analysis Report", "Process Optimization Project"], "resources": ["Coursera Business Analytics", "Udemy SQL / Tableau Courses", "YouTube – Analytics University"]},
-    "Digital Marketing Specialist": {"skills": ["SEO / SEM", "Google Analytics", "Content Creation", "Social Media Marketing", "Email Marketing"], "projects": ["SEO Campaign Project", "Social Media Ad Campaign", "Email Marketing Automation"], "resources": ["Google Digital Garage", "HubSpot Academy", "YouTube – Neil Patel / Brian Dean"]},
-    "Blockchain Developer":   {"skills": ["Solidity / Ethereum", "Smart Contracts", "Web3.js / Ethers.js", "Blockchain Architecture", "Cryptography Basics"], "projects": ["Smart Contract Deployment", "NFT Minting Platform", "Decentralized App (DApp)"], "resources": ["CryptoZombies.io", "Coursera Blockchain Courses", "YouTube – Dapp University"]},
-    "AI Researcher":          {"skills": ["Python / R", "Mathematics (Linear Algebra, Probability)", "Deep Learning", "NLP / Computer Vision", "Research Paper Reading & Implementation"], "projects": ["Image Captioning Model", "Text Summarization Model", "Custom Neural Network Research"], "resources": ["arXiv Papers", "DeepLearning.ai", "YouTube – Yannic Kilcher / Two Minute Papers"]},
+JOB_SKILLS = {
+    "Software Developer":{"skills":["Python or Java","Data Structures and Algorithms","HTML CSS JavaScript","Git and GitHub","Databases SQL","OOPS","Problem Solving"],"projects":["Student Management System","Task Tracker Application","Portfolio Website","REST API Mini Project"],"resources":["NPTEL Programming and DSA","YouTube freeCodeCamp","GeeksForGeeks DSA","GitHub Open Source"]},
+    "Frontend Developer":{"skills":["HTML","CSS","JavaScript","React","Responsive Design","Git and GitHub"],"projects":["Portfolio Website","React To-Do App","UI Clone Netflix or Amazon"],"resources":["MDN Web Docs","Traversy Media YouTube","React Official Docs"]},
+    "Backend Developer":{"skills":["Node.js or Python or Java","Databases SQL or NoSQL","APIs RESTful Services","Git and GitHub","Authentication and Security"],"projects":["REST API Project","E-commerce Backend","Blog Platform Backend"],"resources":["Udemy Backend Courses","YouTube Tech With Tim","MongoDB University"]},
+    "Data Scientist":{"skills":["Python","Statistics","Pandas and NumPy","Data Visualization","Machine Learning Basics"],"projects":["Student Performance Analysis","Sales Prediction Model","EDA Project"],"resources":["Kaggle Learn","Krish Naik YouTube","Coursera ML Audit Mode"]},
+    "Machine Learning Engineer":{"skills":["Python","Linear Algebra and Statistics","Scikit-learn TensorFlow PyTorch","Data Preprocessing","Model Deployment"],"projects":["Predictive Analytics Model","Image Classification Project","Recommendation System"],"resources":["Fast.ai Courses","DeepLearning.ai Coursera","YouTube Sentdex Krish Naik"]},
+    "DevOps Engineer":{"skills":["Linux Shell Scripting","CI/CD Jenkins GitHub Actions","Docker Kubernetes","Cloud Platforms AWS GCP Azure","Monitoring and Logging"],"projects":["CI/CD Pipeline Setup","Dockerized App Deployment","Cloud Infrastructure Project"],"resources":["Linux Academy A Cloud Guru","YouTube TechWorld with Nana","Official Docker and Kubernetes Docs"]},
+    "UI/UX Designer":{"skills":["Figma or Adobe XD","Wireframing and Prototyping","User Research and Testing","Responsive Design Principles","Portfolio Creation"],"projects":["Mobile App Wireframes","Website Redesign Project","Interactive Prototype"],"resources":["Figma Learn Tutorials","Coursera UI/UX Courses","YouTube DesignCourse"]},
+    "Cybersecurity Analyst":{"skills":["Networking Basics","Linux and Windows Security","Penetration Testing","Firewalls and IDS IPS","Security Tools Wireshark Nmap"],"projects":["Vulnerability Assessment","Phishing Simulation","Secure Web App Setup"],"resources":["TryHackMe Hack The Box","Cybrary Courses","YouTube NetworkChuck"]},
+    "Mobile App Developer":{"skills":["Java Kotlin Swift Flutter","UI/UX for Mobile","APIs and Backend Integration","App Deployment Play Store App Store","Debugging and Testing"],"projects":["Todo App","Weather Forecast App","E-commerce Mobile App"],"resources":["Udemy Mobile App Courses","YouTube The Net Ninja","Official Flutter Docs"]},
+    "Cloud Engineer":{"skills":["AWS Azure GCP","Cloud Architecture and Design","Networking and Security","CI/CD Pipelines","Infrastructure as Code Terraform"],"projects":["Deploy Web App on Cloud","Serverless Application Project","Cloud Monitoring Setup"],"resources":["AWS Azure GCP Official Docs","A Cloud Guru Courses","YouTube TechWorld with Nana"]},
+    "Business Analyst":{"skills":["Excel SQL Tableau PowerBI","Requirement Gathering","Process Modeling","Data Analysis and Reporting","Communication and Presentation"],"projects":["Sales Dashboard","Customer Analysis Report","Process Optimization Project"],"resources":["Coursera Business Analytics","Udemy SQL Tableau Courses","YouTube Analytics University"]},
+    "Blockchain Developer":{"skills":["Solidity Ethereum","Smart Contracts","Web3.js Ethers.js","Blockchain Architecture","Cryptography Basics"],"projects":["Smart Contract Deployment","NFT Minting Platform","Decentralized App DApp"],"resources":["CryptoZombies.io","Coursera Blockchain Courses","YouTube Dapp University"]},
+    "AI Researcher":{"skills":["Python or R","Mathematics Linear Algebra Probability","Deep Learning","NLP or Computer Vision","Research Paper Reading and Implementation"],"projects":["Image Captioning Model","Text Summarization Model","Custom Neural Network Research"],"resources":["arXiv Papers","DeepLearning.ai","YouTube Yannic Kilcher"]},
 }
 
-# ─────────────────────────────────────────────
-# HELPERS
-# ─────────────────────────────────────────────
 def safe_unique(df, col, fallback):
     return sorted(df[col].dropna().unique()) if col in df.columns else fallback
 
-def normalize_yes_no(x):
-    if isinstance(x, str):
-        x = x.strip().lower()
-        if x in ("yes", "y", "true", "1"):
-            return "Yes"
-    return "No"
+def normalize_yn(x):
+    return "Yes" if isinstance(x,str) and x.strip().lower() in ("yes","y","true","1") else "No"
 
-def detect_category(interest: str) -> str:
+def detect_cat(interest):
     s = str(interest).lower()
-    if any(k in s for k in ["ai/ml", "ml", "ai", "data science", "data analysis"]): return "ML"
+    if any(k in s for k in ["ai/ml","ml","ai","data science","data analysis"]): return "ML"
     if "web" in s or "app" in s: return "WEB"
-    if "competitive coding" in s: return "DSA"
+    if "competitive" in s: return "DSA"
     if "cyber" in s: return "CYBER"
     if "vlsi" in s: return "VLSI"
     if "iot" in s: return "IOT"
     if "embedded" in s: return "EMBEDDED"
-    if "signal processing" in s: return "SIGNAL"
+    if "signal" in s: return "SIGNAL"
     if "communication systems" in s: return "COMM_SYSTEMS"
-    if "power systems" in s: return "POWER"
-    if "renewable energy" in s: return "RENEW"
+    if "power" in s: return "POWER"
+    if "renewable" in s: return "RENEW"
     if "smart grid" in s: return "SMARTGRID"
-    if "industrial automation" in s: return "AUTOMATION"
+    if "automation" in s: return "AUTOMATION"
     if "electrical design" in s: return "ELECTRICAL_DESIGN"
     if "robotics" in s: return "ROBOTICS"
-    if "cad design" in s: return "CAD"
+    if "cad" in s: return "CAD"
     if "automobile" in s: return "AUTO"
     if "thermal" in s: return "THERMAL"
     if "manufacturing" in s: return "MANUFACTURING"
     if "communication skills" in s: return "SOFT"
     return "DSA"
 
-def clamp(x, lo, hi): return max(lo, min(hi, x))
+def clamp(x,lo,hi): return max(lo,min(hi,x))
 
-def level_to_bucket(skill_level: str):
-    s = str(skill_level).lower()
-    if "begin" in s: return "Beginner"
-    if "inter" in s: return "Intermediate"
-    return "Advanced"
+def lvl_bucket(sk):
+    s = str(sk).lower()
+    return "Beginner" if "begin" in s else "Intermediate" if "inter" in s else "Advanced"
 
-def get_similar_students(df, info):
+def similar_students(df, info):
     f = df.copy()
-    if "hostel" in f.columns:
-        f["hostel"] = f["hostel"].apply(normalize_yes_no)
-    for k, col in [("year","year"),("branch","branch"),("interest","interest"),("skill_level","skill_level")]:
-        if col in f.columns and k in info and info[k] is not None:
-            f = f[f[col] == info[k]]
+    if "hostel" in f.columns: f["hostel"] = f["hostel"].apply(normalize_yn)
+    for k,col in [("year","year"),("branch","branch"),("interest","interest"),("skill_level","skill_level")]:
+        if col in f.columns and clean(info.get(k)):
+            f = f[f[col]==info[k]]
     return f
 
-def build_week_plan(interest, skill_level, budget_level):
-    cat  = detect_category(interest)
-    data = COURSE_DB.get(cat, COURSE_DB["DSA"])
-    free_note = "Use free resources (YouTube/NPTEL/free audits)." if str(budget_level) == "Low" else "Consider 1 paid course for faster progress."
-    lvl = str(skill_level).lower()
-    practice = "45–60 mins daily practice." if "begin" in lvl else "60–90 mins daily practice."
-    week_plan = []
-    for i in range(4):
-        week_plan.append({
-            "title": f"Week {i+1} — " + ["Foundation", "Core Skills", "Build Projects", "Portfolio & Review"][i],
-            "bullets": [
-                f"Course focus: {data['courses'][min(i, len(data['courses'])-1)]}",
-                data["weeks"][i],
-                practice,
-                free_note,
-            ],
-        })
-    return week_plan, data["courses"], data["projects"]
+def build_weeks(interest, skill_level, budget):
+    cat  = detect_cat(interest)
+    db   = COURSE_DB.get(cat, COURSE_DB["DSA"])
+    free = "Use free resources YouTube/NPTEL." if budget=="Low" else "Consider 1 paid course for faster progress."
+    prac = "45-60 mins daily practice." if "begin" in str(skill_level).lower() else "60-90 mins daily practice."
+    titles = ["Foundation","Core Skills","Build Projects","Portfolio and Review"]
+    return (
+        [{"title":f"Week {i+1} - {titles[i]}","bullets":[f"Course: {db['courses'][min(i,len(db['courses'])-1)]}",db["weeks"][i],prac,free]} for i in range(4)],
+        db["courses"], db["projects"]
+    )
 
-def generate_structured_roadmap(info, df):
-    steps=[];  risks=[];  habits=[];  goals=[]
-    sim = get_similar_students(df, info)
+def generate(info, df):
+    goals=[]; risks=[]; habits=[]; steps=[]
+    sim = similar_students(df, info)
     if len(sim) >= 5:
-        avg_gpa   = sim["gpa"].mean()   if "gpa"         in sim.columns else None
-        avg_study = sim["study_hours"].mean() if "study_hours" in sim.columns else None
-        if avg_gpa and avg_study:
-            sim_note = f"Based on **{len(sim)} similar students**, avg GPA **{avg_gpa:.2f}**, avg study hours **{avg_study:.1f}/day**."
+        ag  = sim["gpa"].mean()         if "gpa"         in sim.columns else None
+        asd = sim["study_hours"].mean() if "study_hours" in sim.columns else None
+        if ag is not None and asd is not None:
+            note = f"Based on {len(sim)} similar students - avg GPA {ag:.2f}, avg study {asd:.1f} hrs/day."
         else:
-            sim_note = f"Showing general roadmap ({len(sim)} similar students found)."
+            note = f"General roadmap shown. {len(sim)} similar profiles found."
     else:
-        sim_note = "Showing a general roadmap based on available data."
+        note = "General roadmap based on your profile."
 
-    goals.append(f"Build a clear learning path in **{info['interest']}**.")
-    if info["gpa"] < 6.0:   goals.append("Improve academic consistency (target +0.5 GPA next semester).")
-    if info["study_hours"] < 3: goals.append("Increase study hours gradually to a sustainable level.")
-    if info["communication"] in ("Poor","Low"): goals.append("Improve communication through weekly speaking/writing practice.")
+    interest_val = clean(info.get("interest")) or "your chosen field"
+    goals.append(f"Build a clear learning path in {interest_val}.")
+    if info["gpa"] < 6.0:
+        goals.append("Improve academic consistency. Target +0.5 GPA next semester.")
+    if info["study_hours"] < 3:
+        goals.append("Gradually increase daily study hours to 3-4 hours.")
+    if info["communication"] in ("Poor","Low"):
+        goals.append("Improve communication through weekly speaking and writing practice.")
 
-    if info["stress_level"] == "High" or info["confusion_level"] == "High":
-        risks.append("High stress/confusion → use weekly planning + short focused sessions.")
-        habits.append("10 min breathing/meditation + 25/5 Pomodoro (2 cycles).")
+    if info["stress_level"]=="High" or info["confusion_level"]=="High":
+        risks.append("High stress or confusion detected. Use weekly planning and short focused sessions.")
+        habits.append("10 min meditation + Pomodoro 25/5 method (2 cycles daily).")
 
-    habits.append("Hostel routine: fixed sleep + fixed study slot + limit late-night scrolling." if info["hostel"] == "Yes"
-                  else "Home routine: fixed study slot + communicate study time to family.")
+    if info["hostel"]=="Yes":
+        habits.append("Fixed sleep schedule + dedicated study slot + limit late-night screen time.")
+    else:
+        habits.append("Fixed study slot at home + communicate your schedule to family.")
 
-    steps.append("Get external support: mentor/teacher/peer group + online communities." if info["family_support"] == "Low"
-                 else "Use family support: share weekly goals and ask for accountability.")
-    steps.append("Use free resources first + build projects (proof > certificates)." if info["budget"] == "Low"
-                 else "Pick 1 high-quality paid course OR mentorship for faster progress.")
-    if info["study_hours"] < 3: steps.append("Study plan: add +30 mins/week until you reach 3–4 hours/day.")
-    if info["gpa"] < 6.0:       steps.append("Academics: revise daily + weekly tests + focus on weak subjects.")
-    if info["communication"] in ("Poor","Low"): steps.append("Communication: 2 short talks/week + write 1 summary/day (5–7 lines).")
+    if info["family_support"]=="Low":
+        steps.append("Join a peer group or online community for external accountability.")
+    else:
+        steps.append("Share weekly goals with family and use their encouragement.")
 
-    week_plan, course_resources, course_projects = build_week_plan(info["interest"], info["skill_level"], info["budget"])
-    return {"similar_note": sim_note, "goals": goals, "risks": risks, "habits": habits, "steps": steps, "week_plan": week_plan, "resources": course_resources, "projects": course_projects}
+    if info["budget"]=="Low":
+        steps.append("Start with free resources and build projects to prove your skills.")
+    else:
+        steps.append("Invest in 1 quality paid course or mentorship for structured learning.")
 
-def readiness_breakdown(info):
-    g = float(info.get("gpa", 0))
-    academics = 30 if g>=8 else 26 if g>=7 else 20 if g>=6 else 14 if g>=5 else 8
-    lvl  = level_to_bucket(info.get("skill_level","Beginner"))
-    sh   = int(info.get("study_hours",0))
-    base = 12 if lvl=="Beginner" else 20 if lvl=="Intermediate" else 26
-    bonus= 6 if sh>=4 else 3 if sh>=3 else 1
-    skills = clamp(base+bonus, 0, 30)
-    sleep    = int(info.get("sleep_hours",6))
-    stress   = info.get("stress_level","Medium")
-    confusion= info.get("confusion_level","Medium")
-    routine  = (8 if sleep>=7 else 5 if sleep>=6 else 2) + (6 if stress=="Low" else 4 if stress=="Medium" else 2) + (6 if confusion=="Low" else 4 if confusion=="Medium" else 2)
-    routine  = clamp(routine, 0, 20)
-    comm  = str(info.get("communication","Average"))
-    communication = 20 if comm in ("Good","High") else 14 if comm in ("Average","Medium") else 8
-    return {"Academics": academics, "Skills": skills, "Routine": routine, "Communication": communication, "Total": clamp(academics+skills+routine+communication, 0, 100)}
+    if info["study_hours"] < 3:
+        steps.append("Add 30 extra mins per week to study routine until reaching 3-4 hrs/day.")
+    if info["gpa"] < 6.0:
+        steps.append("Daily revision + weekly tests + focus on your weakest subjects.")
+    if info["communication"] in ("Poor","Low"):
+        steps.append("2 short talks per week + write 1 paragraph summary daily.")
 
-def roadmap_to_markdown(name, info, roadmap):
-    def s(x):
-        try:
-            if pd.isna(x): return ""
-        except Exception: pass
-        return str(x)
-    lines = [f"# Personalised Roadmap for {s(name) or 'Student'}", f"**Generated:** {date.today().isoformat()}", "", "## Profile"]
+    weeks, courses, projects = build_weeks(info["interest"], info["skill_level"], info["budget"])
+    return {"note":note,"goals":goals,"risks":risks,"habits":habits,"steps":steps,"weeks":weeks,"resources":courses,"projects":projects}
+
+def readiness(info):
+    g  = float(info.get("gpa",0))
+    ac = 30 if g>=8 else 26 if g>=7 else 20 if g>=6 else 14 if g>=5 else 8
+    lv = lvl_bucket(info.get("skill_level","Beginner"))
+    sh = int(info.get("study_hours",0))
+    sk = clamp((12 if lv=="Beginner" else 20 if lv=="Intermediate" else 26)+(6 if sh>=4 else 3 if sh>=3 else 1),0,30)
+    sl = int(info.get("sleep_hours",6))
+    st_= info.get("stress_level","Medium")
+    cf = info.get("confusion_level","Medium")
+    ro = clamp((8 if sl>=7 else 5 if sl>=6 else 2)+(6 if st_=="Low" else 4 if st_=="Medium" else 2)+(6 if cf=="Low" else 4 if cf=="Medium" else 2),0,20)
+    cm = str(info.get("communication","Average"))
+    co = 20 if cm in ("Good","High") else 14 if cm in ("Average","Medium") else 8
+    return {"Academics":ac,"Skills":sk,"Routine":ro,"Communication":co,"Total":clamp(ac+sk+ro+co,0,100)}
+
+def to_md(name, info, r):
+    n = clean(name) or "Student"
+    lines = [f"# Roadmap for {n}", f"Date: {date.today()}", "", "## Profile"]
     for k in ["year","branch","interest","skill_level","budget","hostel","study_hours","gpa","stress_level","confusion_level","communication","family_support"]:
-        lines.append(f"- **{k.replace('_',' ').title()}**: {s(info.get(k))}")
-    lines += ["", "## Data Insight", s(roadmap.get("similar_note","")), "", "## Goals"]
-    for g in roadmap.get("goals",[]): lines.append(f"- {s(g)}")
-    if roadmap.get("risks"):
-        lines += ["", "## Risks"]; [lines.append(f"- {s(r)}") for r in roadmap["risks"]]
-    lines += ["", "## Daily Habits"]; [lines.append(f"- {s(h)}") for h in roadmap.get("habits",[])]
-    lines += ["", "## Action Steps"]; [lines.append(f"- {s(st)}") for st in roadmap.get("steps",[])]
-    lines += ["", "## 4-Week Plan"]
-    for w in roadmap.get("week_plan",[]): lines += [f"### {s(w['title'])}"]+[f"- {s(b)}" for b in w.get("bullets",[])] + [""]
-    lines += ["## Suggested Projects"]; [lines.append(f"- {s(p)}") for p in roadmap.get("projects",[])]
-    lines += ["","## Resources"]; [lines.append(f"- {s(r)}") for r in roadmap.get("resources",[])]
+        val = clean(info.get(k))
+        lines.append(f"- {k.replace('_',' ').title()}: {val if val else 'N/A'}")
+    lines += ["","## Insight", clean(r.get("note","")), "","## Goals"]
+    for g in r.get("goals",[]): lines.append(f"- {clean(g)}")
+    if r.get("risks"):
+        lines += ["","## Risks"]
+        for x in r["risks"]: lines.append(f"- {clean(x)}")
+    lines += ["","## Daily Habits"]
+    for x in r.get("habits",[]): lines.append(f"- {clean(x)}")
+    lines += ["","## Action Steps"]
+    for x in r.get("steps",[]): lines.append(f"- {clean(x)}")
+    lines += ["","## 4-Week Plan"]
+    for w in r.get("weeks",[]):
+        lines += [f"### {w['title']}"] + [f"- {b}" for b in w["bullets"]] + [""]
+    lines += ["## Projects"]
+    for x in r.get("projects",[]): lines.append(f"- {clean(x)}")
+    lines += ["","## Resources"]
+    for x in r.get("resources",[]): lines.append(f"- {clean(x)}")
     return "\n".join(lines)
 
-def compute_skill_gap(required, known):
-    have    = [s for s in required if s in known]
-    missing = [s for s in required if s not in known]
-    return have, missing
+def skill_gap(required, known):
+    return [s for s in required if s in known], [s for s in required if s not in known]
 
-
-# ─────────────────────────────────────────────
-# ROUTING
-# ─────────────────────────────────────────────
 if st.session_state.page == "home":
-    show_landing_page()
+    show_landing()
     st.stop()
 
-# ═══════════════════════════════════════════════
-#  APP PAGE
-# ═══════════════════════════════════════════════
 @st.cache_data
 def load_data():
     df = pd.read_csv("student_performance_final.csv")
@@ -808,275 +391,219 @@ def load_data():
 
 data = load_data()
 
-# ── sticky header ──
-st.markdown("""
-<div class="app-header">
-  <div style="display:flex;align-items:center;justify-content:space-between;">
-    <div class="app-logo">🎯 SkillRoadmap</div>
-    <span style="font-size:12px;color:#475569;">AI-Powered · Free</span>
-  </div>
-</div>
-""", unsafe_allow_html=True)
+st.markdown('<div class="apphdr"><div class="applogo">🎯 SkillRoadmap</div></div>', unsafe_allow_html=True)
 
-# ── back button ──
-col_back, _ = st.columns([1, 8])
-with col_back:
-    if st.button("← Back"):
+cb, _ = st.columns([1,9])
+with cb:
+    if st.button("Back"):
         st.session_state.page = "home"
         st.session_state.roadmap_data = None
         st.rerun()
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# ── safe options ──
-years        = safe_unique(data, "year",               [1,2,3,4])
-branches     = safe_unique(data, "branch",             ["CSE","IT","ECE","EEE","MECH"])
-interests    = safe_unique(data, "interest",           ["ML","Web","DSA","Cyber","IoT"])
-budgets      = safe_unique(data, "budget_level",       ["Low","Medium","High"])
-skill_levels = safe_unique(data, "skill_level",        ["Beginner","Intermediate","Advanced"])
-stress_lvls  = safe_unique(data, "stress_level",       ["Low","Medium","High"])
-conf_lvls    = safe_unique(data, "confusion_level",    ["Low","Medium","High"])
-comm_lvls    = safe_unique(data, "communication_level",["Poor","Average","Good"])
+years     = safe_unique(data,"year",               [1,2,3,4])
+branches  = safe_unique(data,"branch",             ["CSE","IT","ECE","EEE","MECH"])
+interests = safe_unique(data,"interest",           ["AI/ML","Web Development","DSA","Cybersecurity","IoT"])
+budgets   = safe_unique(data,"budget_level",       ["Low","Medium","High"])
+skills_l  = safe_unique(data,"skill_level",        ["Beginner","Intermediate","Advanced"])
+stress_l  = safe_unique(data,"stress_level",       ["Low","Medium","High"])
+conf_l    = safe_unique(data,"confusion_level",    ["Low","Medium","High"])
+comm_l    = safe_unique(data,"communication_level",["Poor","Average","Good"])
 
-# ══════════════════════════════════
-#  INPUT FORM  (two-column layout)
-# ══════════════════════════════════
-st.markdown('<div class="g-card"><div class="g-card-title">📋 Your Profile</div><div class="g-card-sub">Fill your details to generate a personalised roadmap + readiness score + skill gap analysis.</div></div>', unsafe_allow_html=True)
+st.markdown('<div class="wcard"><div class="wct">Your Profile</div><div class="wcs">Fill in your details and click Generate to get your personalised roadmap.</div></div>', unsafe_allow_html=True)
 
-with st.form("profile_form"):
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        name         = st.text_input("👤 Student Name", "")
-        year         = st.selectbox("📅 Year", years)
-        branch       = st.selectbox("🏛️ Branch", branches)
-        gpa          = st.slider("🎓 GPA", 0.0, 10.0, 7.0, 0.1)
-        study_hours  = st.slider("📖 Daily Study Hours", 0, 12, 3)
-    with col2:
-        failures     = st.number_input("❌ Number of Failures", min_value=0, max_value=10, value=0)
-        hostel       = st.selectbox("🏠 Hostel?", ["Yes","No"])
-        sleep_hours  = st.slider("😴 Daily Sleep Hours", 0, 12, 7)
-        family_support = st.selectbox("👨‍👩‍👦 Family Support", ["Low","Medium","High"])
-        interest     = st.selectbox("💡 Primary Interest", interests)
-    with col3:
-        budget       = st.selectbox("💰 Budget Level", budgets)
-        skill_level  = st.selectbox("🛠️ Skill Level", skill_levels)
-        stress_level = st.selectbox("😰 Stress Level", stress_lvls)
-        confusion_level = st.selectbox("🤔 Confusion Level", conf_lvls)
-        communication   = st.selectbox("🗣️ Communication Level", comm_lvls)
+c1,c2,c3 = st.columns(3)
+with c1:
+    st.markdown('<div class="wcard"><div class="pill pi">Personal Info</div>', unsafe_allow_html=True)
+    name   = st.text_input("Student Name","",key="nm")
+    year   = st.selectbox("Year",years,key="yr")
+    branch = st.selectbox("Branch",branches,key="br")
+    hostel = st.selectbox("Hostel?",["Yes","No"],key="ho")
+    fam    = st.selectbox("Family Support",["Low","Medium","High"],key="fa")
+    st.markdown('</div>', unsafe_allow_html=True)
+with c2:
+    st.markdown('<div class="wcard"><div class="pill pv">Academics</div>', unsafe_allow_html=True)
+    gpa    = st.slider("GPA",0.0,10.0,7.0,0.1,key="gp")
+    study  = st.slider("Daily Study Hours",0,12,3,key="sh")
+    sleep  = st.slider("Daily Sleep Hours",0,12,7,key="sl")
+    fail   = st.number_input("Number of Failures",0,10,0,key="fl")
+    stress = st.selectbox("Stress Level",stress_l,key="st")
+    st.markdown('</div>', unsafe_allow_html=True)
+with c3:
+    st.markdown('<div class="wcard"><div class="pill pg">Goals and Skills</div>', unsafe_allow_html=True)
+    interest = st.selectbox("Primary Interest",interests,key="in")
+    budget   = st.selectbox("Budget Level",budgets,key="bu")
+    skill    = st.selectbox("Skill Level",skills_l,key="sk")
+    conf     = st.selectbox("Confusion Level",conf_l,key="cn")
+    comm     = st.selectbox("Communication Level",comm_l,key="cm")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    submitted = st.form_submit_button("🔍  Generate My Roadmap", use_container_width=True)
+st.markdown("<br>", unsafe_allow_html=True)
+_,cg,_ = st.columns([1,2,1])
+with cg:
+    if st.button("Generate My Roadmap", use_container_width=True, key="gen"):
+        st.session_state.student_name = name
+        st.session_state.student_info = {
+            "year":year,"branch":branch,"gpa":float(gpa),
+            "study_hours":int(study),"failures":int(fail),
+            "hostel":hostel,"sleep_hours":int(sleep),
+            "family_support":fam,"interest":interest,
+            "budget":budget,"skill_level":skill,
+            "stress_level":stress,"confusion_level":conf,
+            "communication":comm,
+        }
+        st.session_state.roadmap_data = generate(st.session_state.student_info, data)
 
-if submitted:
-    st.session_state.student_name = name
-    st.session_state.student_info = {
-        "year": year, "branch": branch, "gpa": float(gpa),
-        "study_hours": int(study_hours), "failures": int(failures),
-        "hostel": hostel, "sleep_hours": int(sleep_hours),
-        "family_support": family_support, "interest": interest,
-        "budget": budget, "skill_level": skill_level,
-        "stress_level": stress_level, "confusion_level": confusion_level,
-        "communication": communication,
-    }
-    st.session_state.roadmap_data = generate_structured_roadmap(st.session_state.student_info, data)
-
-# ══════════════════════════════════
-#  RESULTS  (rendered from state)
-# ══════════════════════════════════
 if st.session_state.roadmap_data is not None:
-    roadmap = st.session_state.roadmap_data
-    info    = st.session_state.student_info
-    sname   = st.session_state.student_name
+    rdm   = st.session_state.roadmap_data
+    info  = st.session_state.student_info
+    sname = clean(st.session_state.student_name) or "Student"
+    sc    = readiness(info)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown(f'<div style="text-align:center;font-family:Syne,sans-serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,#a5b4fc,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:24px;">✅ Roadmap Generated for {sname or "Student"}</div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed,#ec4899);border-radius:20px;
+         padding:22px 32px;text-align:center;margin-bottom:24px;box-shadow:0 8px 32px rgba(99,102,241,.30);">
+      <div style="font-family:Syne,sans-serif;font-size:22px;font-weight:800;color:#fff;">
+        Roadmap Ready for {sname}!
+      </div>
+      <div style="font-size:13px;color:rgba(255,255,255,.75);margin-top:4px;">Your personalised 4-week plan is below.</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    # ── Metric tiles ──
-    score = readiness_breakdown(info)
-    c1,c2,c3,c4,c5 = st.columns(5)
     tiles = [
-        ("GPA", f"{info['gpa']:.1f}"),
-        ("Study hrs/day", str(info["study_hours"])),
-        ("Sleep hrs", str(info["sleep_hours"])),
-        ("Readiness", f"{score['Total']}/100"),
-        ("Skill Level", info["skill_level"]),
+        ("GPA",f"{info['gpa']:.1f}","mi"),
+        ("Study/day",f"{info['study_hours']} hrs","mv"),
+        ("Sleep",f"{info['sleep_hours']} hrs","ms"),
+        ("Readiness",f"{sc['Total']}/100","mg"),
+        ("Level",clean(info['skill_level']) or "N/A","mr2"),
     ]
-    for col, (label, val) in zip([c1,c2,c3,c4,c5], tiles):
-        col.markdown(f'<div class="metric-tile"><div class="metric-val">{val}</div><div class="metric-label">{label}</div></div>', unsafe_allow_html=True)
+    cols = st.columns(5)
+    for col,(lbl,val,cls) in zip(cols,tiles):
+        col.markdown(f'<div class="mt {cls}"><div class="mval">{val}</div><div class="mlbl">{lbl}</div></div>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-
-    # ── Readiness score breakdown ──
-    with st.expander("📊  Readiness Score Breakdown", expanded=True):
-        col_score, col_bars = st.columns([1, 2])
-        with col_score:
-            st.markdown(f'<div class="score-ring-wrap"><div class="score-big">{score["Total"]}</div><div class="score-label">out of 100</div></div>', unsafe_allow_html=True)
-        with col_bars:
-            bar_config = [
-                ("Academics",     score["Academics"],     30,  "linear-gradient(90deg,#6366f1,#818cf8)"),
-                ("Skills",        score["Skills"],        30,  "linear-gradient(90deg,#8b5cf6,#a78bfa)"),
-                ("Routine",       score["Routine"],       20,  "linear-gradient(90deg,#0ea5e9,#38bdf8)"),
-                ("Communication", score["Communication"], 20,  "linear-gradient(90deg,#34d399,#6ee7b7)"),
-            ]
-            for label, val, mx, grad in bar_config:
-                pct = int(val/mx*100)
-                st.markdown(f"""
-                <div class="score-bar-wrap">
-                  <div class="score-bar-label">
-                    <span style="color:#e2e8f0">{label}</span>
-                    <span style="color:#6366f1">{val}/{mx}</span>
-                  </div>
-                  <div class="score-bar-track">
-                    <div class="score-bar-fill" style="width:{pct}%;background:{grad}"></div>
-                  </div>
-                </div>""", unsafe_allow_html=True)
-
+    st.markdown('<div class="wcard"><div class="pill pi">Readiness Score</div>', unsafe_allow_html=True)
+    cA,cB = st.columns([1,2])
+    with cA:
+        st.markdown(f'<div style="text-align:center;padding:16px 0;"><div class="sbig">{sc["Total"]}</div><div class="ssub">out of 100</div></div>', unsafe_allow_html=True)
+    with cB:
+        bars = [
+            ("Academics",sc["Academics"],30,"linear-gradient(90deg,#6366f1,#818cf8)","#4f46e5"),
+            ("Skills",sc["Skills"],30,"linear-gradient(90deg,#8b5cf6,#a78bfa)","#7c3aed"),
+            ("Routine",sc["Routine"],20,"linear-gradient(90deg,#0ea5e9,#38bdf8)","#0284c7"),
+            ("Communication",sc["Communication"],20,"linear-gradient(90deg,#10b981,#34d399)","#059669"),
+        ]
+        for lbl,val,mx,grad,hex_ in bars:
+            pct = int(val/mx*100)
+            st.markdown(f'<div class="brow"><span style="color:#374151">{lbl}</span><span style="color:{hex_};font-weight:800">{val}/{mx}</span></div><div class="btrk"><div class="bfil" style="width:{pct}%;background:{grad}"></div></div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── Main tabs ──
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["🧭 Roadmap", "🗓️ 4-Week Plan", "🚀 Projects", "📚 Resources", "🧩 Skill Gap"])
+    t1,t2,t3,t4,t5 = st.tabs(["Roadmap","4-Week Plan","Projects","Resources","Skill Gap"])
 
-    # ── Tab 1 : Roadmap ──
-    with tab1:
-        st.markdown(f'<div style="background:rgba(99,102,241,0.10);border:1px solid rgba(99,102,241,0.28);border-radius:14px;padding:16px 20px;font-size:14px;color:#a5b4fc;margin-bottom:20px;">💡 {roadmap["similar_note"]}</div>', unsafe_allow_html=True)
+    with t1:
+        note_txt = clean(rdm.get("note",""))
+        if note_txt:
+            st.markdown(f'<div class="ib">💡 {note_txt}</div>', unsafe_allow_html=True)
+        st.markdown('<div class="pill pi">Goals</div>', unsafe_allow_html=True)
+        for g in rdm["goals"]:
+            st.markdown(f'<div class="gc"><div class="di"></div><div class="ct">{clean(g)}</div></div>', unsafe_allow_html=True)
+        if rdm["risks"]:
+            st.markdown('<br><div class="pill pr">Risks to Watch</div>', unsafe_allow_html=True)
+            for r in rdm["risks"]:
+                st.markdown(f'<div class="rc"><div class="dr"></div><div class="ct">{clean(r)}</div></div>', unsafe_allow_html=True)
+        st.markdown('<br><div class="pill ps">Daily Habits</div>', unsafe_allow_html=True)
+        for h in rdm["habits"]:
+            st.markdown(f'<div class="hc"><div class="ds"></div><div class="ct">{clean(h)}</div></div>', unsafe_allow_html=True)
+        st.markdown('<br><div class="pill pg">Action Steps</div>', unsafe_allow_html=True)
+        for i,step in enumerate(rdm["steps"],1):
+            st.markdown(f'<div class="sc2"><div class="sn">{i}</div><div class="ct">{clean(step)}</div></div>', unsafe_allow_html=True)
 
-        st.markdown('<div class="sec-pill">🎯 Goals</div>', unsafe_allow_html=True)
-        for g in roadmap["goals"]:
-            st.markdown(f'<div class="goal-item"><div class="goal-dot"></div><div class="goal-text">{g}</div></div>', unsafe_allow_html=True)
+    with t2:
+        wk_colors=["#6366f1","#8b5cf6","#ec4899","#10b981"]
+        for idx,w in enumerate(rdm["weeks"]):
+            bullets = "".join(f'<div class="wkb">{clean(b)}</div>' for b in w["bullets"])
+            st.markdown(f'<div class="wkcard" style="border-left-color:{wk_colors[idx%4]};"><div class="wktit">{clean(w["title"])}</div>{bullets}</div>', unsafe_allow_html=True)
 
-        if roadmap["risks"]:
-            st.markdown('<br><div class="sec-pill">⚠️ Risks to Watch</div>', unsafe_allow_html=True)
-            for r in roadmap["risks"]:
-                st.markdown(f'<div class="risk-item"><div class="risk-dot"></div><div class="goal-text">{r}</div></div>', unsafe_allow_html=True)
+    with t3:
+        st.markdown('<div class="pill pa">Suggested Projects</div>', unsafe_allow_html=True)
+        icons=["🔶","🔷","🟣","🟢","🔴"]
+        for i,p in enumerate(rdm["projects"]):
+            st.markdown(f'<div class="pjc"><div style="font-size:20px">{icons[i%len(icons)]}</div><div class="pjn">{clean(p)}</div></div>', unsafe_allow_html=True)
 
-        st.markdown('<br><div class="sec-pill">🧠 Daily Habits</div>', unsafe_allow_html=True)
-        for h in roadmap["habits"]:
-            st.markdown(f'<div class="habit-item"><div class="habit-dot"></div><div class="goal-text">{h}</div></div>', unsafe_allow_html=True)
+    with t4:
+        st.markdown('<div class="pill ps">Recommended Resources</div>', unsafe_allow_html=True)
+        ri=["🎥","📖","🌐"]
+        for i,r in enumerate(rdm["resources"]):
+            st.markdown(f'<div class="rsc"><div style="font-size:18px">{ri[i%3]}</div><div class="rsn">{clean(r)}</div></div>', unsafe_allow_html=True)
 
-        st.markdown('<br><div class="sec-pill">✅ Action Steps</div>', unsafe_allow_html=True)
-        for i, step in enumerate(roadmap["steps"], 1):
-            st.markdown(f'<div class="step-item"><div class="step-num">{i}</div><div class="goal-text">{step}</div></div>', unsafe_allow_html=True)
-
-    # ── Tab 2 : 4-Week Plan ──
-    with tab2:
-        for w in roadmap["week_plan"]:
-            bullets_html = "".join(f'<div class="week-bullet">{b}</div>' for b in w["bullets"])
-            st.markdown(f'<div class="week-card"><div class="week-title">{w["title"]}</div>{bullets_html}</div>', unsafe_allow_html=True)
-
-    # ── Tab 3 : Projects ──
-    with tab3:
-        st.markdown('<div class="sec-pill">🚀 Suggested Projects</div>', unsafe_allow_html=True)
-        icons = ["🔵","🟣","🟡","🟢","🔴"]
-        for i, p in enumerate(roadmap["projects"]):
-            st.markdown(f'<div class="proj-card"><div class="proj-icon">{icons[i%len(icons)]}</div><div class="proj-name">{p}</div></div>', unsafe_allow_html=True)
-        st.markdown('<p style="font-size:12px;color:#475569;margin-top:12px;">Tip: Add screenshots + README + clear results. That makes your project look strong.</p>', unsafe_allow_html=True)
-
-    # ── Tab 4 : Resources ──
-    with tab4:
-        st.markdown('<div class="sec-pill">📚 Recommended Resources</div>', unsafe_allow_html=True)
-        res_icons = ["🎥","📖","🌐"]
-        for i, r in enumerate(roadmap["resources"]):
-            st.markdown(f'<div class="res-card"><div class="res-icon">{res_icons[i%len(res_icons)]}</div><div class="res-name">{r}</div></div>', unsafe_allow_html=True)
-
-    # ── Tab 5 : Skill Gap Analysis ──
-    with tab5:
-        st.markdown('<div class="sec-pill">🧩 Skill Gap Analysis</div>', unsafe_allow_html=True)
-        st.markdown("""<p style='font-size:14px;color:#64748b;margin-bottom:20px;'>Select a job role, then tick the skills you already know — we will show your match % and what to learn next.</p>""", unsafe_allow_html=True)
-
-        job_roles = ["— Select a role —"] + list(JOB_SKILL_ANALYSIS.keys())
-        job_choice = st.selectbox("🎯 Target Job Role", job_roles, key="sg_role_tab")
-
-        if job_choice != "— Select a role —":
-            job_info = JOB_SKILL_ANALYSIS[job_choice]
-
-            # Required skills + info
-            col_left, col_right = st.columns([1, 1])
-            with col_left:
-                st.markdown('<div class="sec-pill">🧠 Required Skills</div>', unsafe_allow_html=True)
-                for sk in job_info["skills"]:
-                    st.markdown(f'<div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.22);border-radius:10px;padding:8px 14px;margin-bottom:6px;font-size:13px;color:#c7d2fe;">• {sk}</div>', unsafe_allow_html=True)
-
-            with col_right:
-                st.markdown('<div class="sec-pill">🧪 Sample Projects</div>', unsafe_allow_html=True)
-                for p in job_info["projects"]:
-                    st.markdown(f'<div class="proj-card" style="margin-bottom:6px;"><div class="proj-name" style="color:#fcd34d;">{p}</div></div>', unsafe_allow_html=True)
-
+    with t5:
+        st.markdown('<div class="pill pv">Skill Gap Analysis</div>', unsafe_allow_html=True)
+        jroles  = ["Select a role"] + list(JOB_SKILLS.keys())
+        jchoice = st.selectbox("Target Job Role", jroles, key="jc")
+        if jchoice != "Select a role":
+            ji = JOB_SKILLS[jchoice]
+            cl2,cr2 = st.columns(2)
+            with cl2:
+                st.markdown('<div class="pill pv">Required Skills</div>', unsafe_allow_html=True)
+                for sk in ji["skills"]:
+                    st.markdown(f'<div class="skr">• {clean(sk)}</div>', unsafe_allow_html=True)
+            with cr2:
+                st.markdown('<div class="pill pa">Sample Projects</div>', unsafe_allow_html=True)
+                for p in ji["projects"]:
+                    st.markdown(f'<div class="pjc"><div class="pjn">{clean(p)}</div></div>', unsafe_allow_html=True)
             st.markdown("<br>", unsafe_allow_html=True)
-
-            # Skill selector
-            st.markdown('<div class="sec-pill">✅ Mark Skills You Already Know</div>', unsafe_allow_html=True)
-            known_skills = st.multiselect(
-                "Select skills you already have:",
-                options=job_info["skills"],
-                key="sg_known_tab",
-            )
-
-            # Gap computation
-            have, missing = compute_skill_gap(job_info["skills"], known_skills)
-            pct = int(len(have) / len(job_info["skills"]) * 100) if job_info["skills"] else 0
-
-            # Progress bar
+            st.markdown('<div class="pill pg">Skills You Already Know</div>', unsafe_allow_html=True)
+            known = st.multiselect("Select your current skills:", options=ji["skills"], key="km")
+            have,miss = skill_gap(ji["skills"], known)
+            pct = int(len(have)/len(ji["skills"])*100) if ji["skills"] else 0
+            bc  = "#10b981" if pct>=70 else "#f59e0b" if pct>=40 else "#ef4444"
+            tag = "Strong match - ready to apply!" if pct>=70 else "Getting there - keep building!" if pct>=40 else "Start learning - you have got this!"
             st.markdown("<br>", unsafe_allow_html=True)
-            bar_color = "#34d399" if pct >= 70 else "#fbbf24" if pct >= 40 else "#fb7185"
             st.markdown(f"""
-            <div style="margin-bottom:8px;">
-              <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
-                <span style="color:#e2e8f0;font-weight:700;">📊 Skill Match</span>
-                <span style="color:{bar_color};font-weight:800;">{pct}%</span>
+            <div style="background:#fff;border:1.5px solid #e0e7ff;border-radius:16px;padding:20px 24px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.06);">
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                <span style="font-weight:800;font-family:Syne,sans-serif;color:#1e1b4b;font-size:15px;">Skill Match</span>
+                <span style="font-weight:800;font-size:24px;color:{bc};">{pct}%</span>
               </div>
-              <div style="height:12px;border-radius:999px;background:rgba(255,255,255,0.08);overflow:hidden;">
-                <div style="height:100%;width:{pct}%;background:{bar_color};border-radius:999px;transition:width 0.5s ease;"></div>
+              <div style="height:12px;border-radius:999px;background:#f1f5f9;overflow:hidden;margin-bottom:8px;">
+                <div style="height:100%;width:{pct}%;background:{bc};border-radius:999px;"></div>
               </div>
-              <div style="font-size:12px;color:#475569;margin-top:6px;">
-                {"🟢 Strong match — ready to apply!" if pct>=70 else "🟡 Getting there — keep building!" if pct>=40 else "🔴 Start learning — you've got this!"}
-              </div>
+              <div style="font-size:13px;color:{bc};font-weight:700;">{tag}</div>
             </div>
             """, unsafe_allow_html=True)
-
-            st.markdown("<br>", unsafe_allow_html=True)
-            col_h, col_m = st.columns(2)
-
-            with col_h:
-                st.markdown('<div class="sec-pill" style="background:rgba(52,211,153,0.12);border-color:rgba(52,211,153,0.35);color:#6ee7b7;">✅ Skills You Have</div>', unsafe_allow_html=True)
+            ch2,cm2 = st.columns(2)
+            with ch2:
+                st.markdown('<div class="pill pg">You Have</div>', unsafe_allow_html=True)
                 if have:
-                    for sk in have:
-                        st.markdown(f'<div class="skill-have">✅ {sk}</div>', unsafe_allow_html=True)
+                    for sk in have: st.markdown(f'<div class="skh">✅ {clean(sk)}</div>', unsafe_allow_html=True)
                 else:
-                    st.markdown('<p style="font-size:13px;color:#475569;">Select skills you know above.</p>', unsafe_allow_html=True)
-
-            with col_m:
-                st.markdown('<div class="sec-pill" style="background:rgba(251,113,133,0.12);border-color:rgba(251,113,133,0.35);color:#fda4af;">🔴 Skills to Learn</div>', unsafe_allow_html=True)
-                if missing:
-                    for sk in missing:
-                        st.markdown(f'<div class="skill-need">🔴 {sk}</div>', unsafe_allow_html=True)
+                    st.markdown('<p style="font-size:13px;color:#6b7280;">Select your skills above.</p>', unsafe_allow_html=True)
+            with cm2:
+                st.markdown('<div class="pill pr">To Learn</div>', unsafe_allow_html=True)
+                if miss:
+                    for sk in miss: st.markdown(f'<div class="skn">🔴 {clean(sk)}</div>', unsafe_allow_html=True)
                 else:
-                    st.markdown('<div style="background:rgba(52,211,153,0.10);border:1px solid rgba(52,211,153,0.30);border-radius:12px;padding:14px;font-size:14px;color:#6ee7b7;font-weight:700;">🎉 You have all required skills!</div>', unsafe_allow_html=True)
-
-            if missing:
+                    st.markdown('<div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:14px;font-size:14px;color:#15803d;font-weight:700;">All skills covered!</div>', unsafe_allow_html=True)
+            if miss:
                 st.markdown("<br>", unsafe_allow_html=True)
-                st.markdown('<div class="sec-pill">🛣️ Recommended Learning Order</div>', unsafe_allow_html=True)
-                for i, sk in enumerate(missing, 1):
-                    st.markdown(f'<div class="learn-step"><div class="learn-step-num">{i}</div><div class="learn-step-text">Learn <strong style="color:#e2e8f0">{sk}</strong></div></div>', unsafe_allow_html=True)
-
-            # Resources for job
+                st.markdown('<div class="pill pv">Learning Order</div>', unsafe_allow_html=True)
+                for i,sk in enumerate(miss,1):
+                    st.markdown(f'<div class="lst"><div class="ln">{i}</div><div class="lt">Learn {clean(sk)}</div></div>', unsafe_allow_html=True)
             st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown('<div class="sec-pill">📚 Resources for this Role</div>', unsafe_allow_html=True)
-            for r in job_info["resources"]:
-                st.markdown(f'<div class="res-card"><div class="res-icon">📌</div><div class="res-name">{r}</div></div>', unsafe_allow_html=True)
+            st.markdown('<div class="pill ps">Resources for this Role</div>', unsafe_allow_html=True)
+            for r in ji["resources"]:
+                st.markdown(f'<div class="rsc"><div style="font-size:16px">📌</div><div class="rsn">{clean(r)}</div></div>', unsafe_allow_html=True)
 
-    # ── Download ──
     st.markdown("<br>", unsafe_allow_html=True)
-    md = roadmap_to_markdown(sname, info, roadmap)
-    st.download_button(
-        label="⬇️  Download Full Roadmap (Markdown)",
-        data=md.encode("utf-8"),
-        file_name=f"roadmap_{(sname or 'student').replace(' ','_').lower()}.md",
-        mime="text/markdown",
-        use_container_width=True,
-    )
+    md_txt = to_md(sname, info, rdm)
+    st.download_button("Download Full Roadmap (Markdown)", data=md_txt.encode("utf-8"),
+        file_name=f"roadmap_{sname.replace(' ','_').lower()}.md", mime="text/markdown", use_container_width=True)
 
-# ── Dataset preview ──
 st.markdown("<br>", unsafe_allow_html=True)
-with st.expander("📊  Sample Student Dataset (Preview)"):
+with st.expander("Dataset Preview"):
     st.dataframe(data, use_container_width=True)
 
-st.markdown('<p style="text-align:center;font-size:11px;color:#1e293b;margin-top:32px;"> Student Skill Roadmap · Streamlit</p>', unsafe_allow_html=True)
+st.markdown('<p style="text-align:center;font-size:11px;color:#9ca3af;margin-top:24px;padding-bottom:24px;">Student Skill Roadmap - Mini Project</p>', unsafe_allow_html=True)
