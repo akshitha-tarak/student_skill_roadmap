@@ -928,6 +928,10 @@ if st.session_state.page == "home":
 def load_data():
     df = pd.read_csv("student_performance_final.csv")
     df.columns = df.columns.str.lower()
+    df = df.dropna()  # remove rows with any null
+    df = df[df.apply(lambda row: all(str(v).strip() not in ("", "nan", "none", "null") 
+                                     for v in row), axis=1)]
+    df = df.reset_index(drop=True)
     return df
 
 data = load_data()
