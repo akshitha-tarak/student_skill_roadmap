@@ -390,6 +390,8 @@ def load_data():
     return df
 
 data = load_data()
+st.write(data.columns.tolist())  # See actual column names
+st.write(data.head(2))         
 
 st.markdown('<div class="apphdr"><div class="applogo">🎯 SkillRoadmap</div></div>', unsafe_allow_html=True)
 
