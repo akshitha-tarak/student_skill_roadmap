@@ -730,15 +730,7 @@ def safe_unique(df, col, fallback):
     return sorted(vals) if vals else fallback
 
 def normalize_yes_no(x):
-    if isinstance(x, str):
-        x_lower = x.strip().lower()
-        # Hostel / yes variants
-        if x_lower in ("yes", "y", "true", "1", "hosteler", "hosteller", "hostel", "yes - hostel"):
-            return "Yes"
-        # Day scholar / no variants
-        if x_lower in ("no", "n", "false", "0", "day scholar", "day-scholar", "dayscholar", "not hosteler"):
-            return "No"
-    return "No"
+    return str(x).strip() if x is not None else "Day Scholar"
 
 def detect_category(interest: str) -> str:
     s = str(interest).lower()
@@ -776,7 +768,7 @@ def get_similar_students(df, info):
     f = df.copy()
     # Normalise hostel column so "Day Scholar" → "No", "Hosteler" → "Yes"
     if "hostel" in f.columns:
-        f["hostel"] = f["hostel"].apply(normalize_yes_no)
+        f["hostel"] = f["hostel"].apply(lambda x: str(x).strip())
     for k, col in [("year","year"),("branch","branch"),("interest","interest"),("skill_level","skill_level")]:
         if col in f.columns and k in info and info[k] is not None:
             f = f[f[col] == info[k]]
@@ -957,20 +949,18 @@ with col_back:
         st.rerun()
 
 st.markdown("<br>", unsafe_allow_html=True)
-
-years        = safe_unique(data, "year",               [1,2,3,4])
-branches     = safe_unique(data, "branch",             ["CSE","IT","ECE","EEE","MECH"])
-interests    = safe_unique(data, "interest",           ["ML","Web","DSA","Cyber","IoT"])
-budgets      = safe_unique(data, "budget_level",       ["Low","Medium","High"])
-skill_levels = safe_unique(data, "skill_level",        ["Beginner","Intermediate","Advanced"])
-stress_lvls  = safe_unique(data, "stress_level",       ["Low","Medium","High"])
-conf_lvls    = safe_unique(data, "confusion_level",    ["Low","Medium","High"])
-comm_lvls    = safe_unique(data, "communication_level",["Poor","Average","Good"])
+years        = safe_unique(data, "year",                [1,2,3,4])
+branches     = safe_unique(data, "branch",              ["CSE","IT","ECE","EEE","MECH"])
+interests    = safe_unique(data, "interest",            ["AI/ML","Web Development","Competitive Coding","Cybersecurity","IoT"])
+budgets      = safe_unique(data, "budget_level",        ["Low","Medium","High"])
+skill_levels = safe_unique(data, "skill_level",         ["Beginner","Intermediate","Advanced"])
+stress_lvls  = safe_unique(data, "stress_level",        ["Low","Medium","High"])
+conf_lvls    = safe_unique(data, "confusion_level",     ["Low","Medium","High"])
+comm_lvls    = safe_unique(data, "communication_level", ["Poor","Average","Good"])
 
 # Hostel: CSV may use "Day Scholar" / "Hosteler" — normalise to Yes / No for display
-_hostel_raw   = safe_unique(data, "hostel", ["Yes","No"])
-_hostel_map   = {v: normalize_yes_no(v) for v in _hostel_raw}   # raw → Yes/No
-hostel_display = sorted(set(_hostel_map.values()))               # ["No","Yes"]
+_hostel_raw   = safe_unique(data, "hostel", ["Day Scholar","Hosteler"])
+hostel_display = sorted(set(_hostel_raw))
 
 st.markdown('<div class="g-card"><div class="g-card-title">📋 Your Profile</div><div class="g-card-sub">Fill your details to generate a personalised roadmap + readiness score + skill gap analysis.</div></div>', unsafe_allow_html=True)
 
