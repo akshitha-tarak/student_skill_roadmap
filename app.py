@@ -723,11 +723,11 @@ JOB_SKILL_ANALYSIS = {
 def safe_unique(df, col, fallback):
     if col not in df.columns:
         return fallback
-    vals = df[col].dropna().unique()
-    vals = [v for v in vals 
-            if v is not None 
-            and str(v).strip() not in ("", "nan", "none", "null", "NaN")]
     try:
+        vals = df[col].dropna().unique().tolist()
+        vals = [v for v in vals 
+                if v is not None 
+                and str(v).strip() not in ("", "nan", "none", "null", "NaN")]
         return sorted(vals, key=lambda x: str(x)) if vals else fallback
     except Exception:
         return fallback
