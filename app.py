@@ -765,16 +765,35 @@ def level_to_bucket(skill_level: str):
     return "Advanced"
 
 def get_similar_students(df, info):
+    # f = df.copy()
+    # # Normalise hostel column so "Day Scholar" → "No", "Hosteler" → "Yes"
+    # if "hostel" in f.columns:
+    #     f["hostel"] = f["hostel"].apply(lambda x: str(x).strip())
+    # for k, col in [("year","year"),("branch","branch"),("interest","interest"),("skill_level","skill_level")]:
+    #     if col in f.columns and k in info and info[k] is not None:
+    #         f = f[f[col] == info[k]]
+    # # Also filter hostel if present (info["hostel"] is already "Yes"/"No")
+    # if "hostel" in f.columns and "hostel" in info and info["hostel"] is not None:
+    #     f = f[f["hostel"] == info["hostel"]]
+    # return f
     f = df.copy()
-    # Normalise hostel column so "Day Scholar" → "No", "Hosteler" → "Yes"
-    if "hostel" in f.columns:
-        f["hostel"] = f["hostel"].apply(lambda x: str(x).strip())
-    for k, col in [("year","year"),("branch","branch"),("interest","interest"),("skill_level","skill_level")]:
-        if col in f.columns and k in info and info[k] is not None:
-            f = f[f[col] == info[k]]
-    # Also filter hostel if present (info["hostel"] is already "Yes"/"No")
-    if "hostel" in f.columns and "hostel" in info and info["hostel"] is not None:
-        f = f[f["hostel"] == info["hostel"]]
+
+    # Step 1: Try strict match
+    strict = f[
+        (f["branch"] == info["branch"]) &
+        (f["interest"] == info["interest"])
+    ]
+
+    # Step 2: If too small, relax conditions
+    if len(strict) >= 5:
+        return strict
+
+    relaxed = f[f["branch"] == info["branch"]]
+
+    if len(relaxed) >= 5:
+        return relaxed
+
+    # Step 3: fallback → return full dataset
     return f
 
 def build_week_plan(interest, skill_level, budget_level):
