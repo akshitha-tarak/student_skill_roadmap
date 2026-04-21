@@ -989,14 +989,22 @@ with col_back:
         st.rerun()
 
 st.markdown("<br>", unsafe_allow_html=True)
-years        = safe_unique(data, "year",                [1,2,3,4])
-branches     = safe_unique(data, "branch",              ["CSE","IT","ECE","EEE","MECH"])
-interests    = safe_unique(data, "interest",            ["AI/ML","Web Development","Competitive Coding","Cybersecurity","IoT"])
-budgets      = safe_unique(data, "budget_level",        ["Low","Medium","High"])
-skill_levels = safe_unique(data, "skill_level",         ["Beginner","Intermediate","Advanced"])
-stress_lvls  = safe_unique(data, "stress_level",        ["Low","Medium","High"])
-conf_lvls    = safe_unique(data, "confusion_level",     ["Low","Medium","High"])
-comm_lvls    = safe_unique(data, "communication_level", ["Poor","Average","Good"])
+# years        = safe_unique(data, "year",                [1,2,3,4])
+# branches     = safe_unique(data, "branch",              ["CSE","IT","ECE","EEE","MECH"])
+# interests    = safe_unique(data, "interest",            ["AI/ML","Web Development","Competitive Coding","Cybersecurity","IoT"])
+# budgets      = safe_unique(data, "budget_level",        ["Low","Medium","High"])
+# skill_levels = safe_unique(data, "skill_level",         ["Beginner","Intermediate","Advanced"])
+# stress_lvls  = safe_unique(data, "stress_level",        ["Low","Medium","High"])
+# conf_lvls    = safe_unique(data, "confusion_level",     ["Low","Medium","High"])
+# comm_lvls    = safe_unique(data, "communication_level", ["Poor","Average","Good"])
+years        = [1, 2, 3, 4]
+branches     = ["CSE", "ECE", "EEE", "IT", "Mechanical"]
+interests    = sorted(data["interest"].dropna().unique().tolist())
+budgets      = ["High", "Low", "Medium"]
+skill_levels = ["Beginner", "Intermediate"]
+stress_lvls  = ["High", "Low", "Medium"]
+conf_lvls    = ["High", "Low", "Medium"]
+comm_lvls    = ["Average", "Good", "Poor"]
 
 # Hostel: CSV may use "Day Scholar" / "Hosteler" — normalise to Yes / No for display
 # _hostel_raw   = safe_unique(data, "hostel", ["Day Scholar","Hosteler"])
