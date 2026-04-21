@@ -727,7 +727,10 @@ def safe_unique(df, col, fallback):
     vals = [v for v in vals 
             if v is not None 
             and str(v).strip() not in ("", "nan", "none", "null", "NaN")]
-    return sorted(vals) if vals else fallback
+    try:
+        return sorted(vals, key=lambda x: str(x)) if vals else fallback
+    except Exception:
+        return fallback
 
 def normalize_yes_no(x):
     return str(x).strip() if x is not None else "Day Scholar"
