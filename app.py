@@ -1737,7 +1737,6 @@ def show_landing_page():
     <div class="landing">
       <div class="nav">
         <div class="nav-logo">🎯  Personalized Skill Roadmap</div>
-        <div class="nav-badge">Beta v1.0</div>
       </div>
       <div class="hero">
         <div class="confused-tag">😕 &nbsp; Not sure where to start?</div>
