@@ -4,7 +4,7 @@ import random
 from datetime import date
 
 st.set_page_config(
-    page_title=" Personalized SkillRoadmap",
+    page_title=" Personalized Skill Roadmap",
     page_icon="🎯",
     layout="wide",
 )
@@ -502,7 +502,7 @@ def show_landing_page():
     st.markdown(f"""
     <div class="landing">
       <div class="nav">
-        <div class="nav-logo">🎯  Personalized SkillRoadmap</div>
+        <div class="nav-logo">🎯  Personalized Skill Roadmap</div>
       </div>
       <div class="hero">
         <div class="confused-tag">😕 &nbsp; Not sure where to start?</div>
@@ -969,8 +969,7 @@ data = load_data()
 st.markdown("""
 <div class="app-header">
   <div style="display:flex;align-items:center;justify-content:space-between;">
-    <div class="app-logo">🎯 SkillRoadmap</div>
-    <span style="font-size:12px;color:#475569;">AI-Powered · Free</span>
+    <div class="app-logo">🎯 Skill Roadmap</div>
   </div>
 </div>
 """, unsafe_allow_html=True)
